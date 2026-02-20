@@ -43,16 +43,22 @@ protontricks 305620 dotnetdesktop6
 5. install the pre-release/nightly melonloader to the game root directory. Use the MelonLoader.Installer.Linux for convenience, which will automatically detect the correct path and type of game installation and setup the melonloader for you.
 ### Building the __Sky Co-Op__ mod libraries (SkyCoopServer and SkyCoopClient)
 1. Install the latest dotnet 6 SDK in your linux development environment.
+
 Arch W/ Paru: `paru -S dotnet-sdk-6.0`
-2. Install NuGet package manager.
-3. Install `WebRtcVadSharp` version 1.3.2.0 and copy the DLL from your NuGet lib folder to the `SkyCoop/dependencies` directory.
-4. Download the latest ModSettings.dll and place it inside the `SkyCoop/dependencies` directory.
-5. in SkyCoop folder run `dotnet build`
-6. The build should show 2 errors about `Postbuild.cmd` - ignore that. The built DLLs should be inside your `SkyCoop/Output/Debug/` directory.
-7. Copy the built DLLs and JSON files from the `SkyCoop/Output/Debug/` directory to your Mods folder.
-8. Install `Mono.Nat`, `LiteNetLib` and `OpenVoiceSharp` via NuGet package manager and copy them to your Mods folder. The default location for these libraries is in the `~/.nuget/packages/` directory. The correct DLLs are located inside the `lib` directory. 
-9. Place the latest ModSettings.dll and ModComponent.dll mods into your Mods folder.
-### WIP: Building the assetbundles and the .modcomponent coming soon
+
+3. Install NuGet package manager.
+4. Install `WebRtcVadSharp` version 1.3.2.0 and copy the DLL from your NuGet lib folder to the `SkyCoop/dependencies` directory.
+5. Download the latest ModSettings.dll and place it inside the `SkyCoop/dependencies` directory.
+6. in SkyCoop folder run `dotnet build`
+7. The build should show 2 errors about `Postbuild.cmd` - ignore that. The built DLLs should be inside your `SkyCoop/Output/Debug/` directory.
+8. Copy the built DLLs and JSON files from the `SkyCoop/Output/Debug/` directory to your Mods folder.
+9. Install `Mono.Nat`, `LiteNetLib` and `OpenVoiceSharp` via NuGet package manager and copy them to your Mods folder.
+The default location for these libraries is in the `~/.nuget/packages/` directory. The correct DLLs are located inside the `lib` directory. 
+11. Place the latest ModSettings.dll and ModComponent.dll mods into your Mods folder.
+
+### Building the AssetBundles and the .modcomponent
+
+WIP: Coming Soon
 
 # Disclaimer
 The mod developers of **Sky Co-Op** are not affiliated in any way with [The Long Dark](https://store.steampowered.com/app/305620). [The Long Dark](https://store.steampowered.com/app/305620) is a product of [Hinterland Studio Inc](https://hinterlandgames.com/).
