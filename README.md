@@ -9,7 +9,7 @@ WIP: I am still reviewing the codebase. I will update this section soon.
 
 ## FAQ
 ### Why did you fork it?
-I seek to improve the overall quality of the mod, seeing as it is currently lacking in many areas such as localizations and does not support the latest version. I am also quite impatient, opinionated and generally like to avoid working with others, which is why I decided to take matters in my own hands.
+I seek to improve the overall quality of the mod, seeing as it is currently lacking in many areas such as localizations and does not support the latest game version (2.51 as of time of writing). I am also quite impatient, opinionated and generally like to avoid working with others, which is why I decided to take matters in my own hands.
 
 ### Why did you remove the Texas Holdem card game and the talking fish feature?
 Initially I received a healthy chuckle from discovering those features in the original codebase, but ultimately I quickly decided to remove them in order to focus on the core aspects of the mod, which I have deemed as top priority. I might reintegrate them later as togglable features.
