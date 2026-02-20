@@ -1,6 +1,6 @@
-# SkyCoop Reborn
+# Sky Co-op
 
-Reborn is planned as a rework of the original **Sky Co-Op** mod built from the ground up, in order to support the latest versions of the game [The Long Dark](https://store.steampowered.com/app/305620), and the latest release of the [Melon Loader](https://github.com/LavaGang/MelonLoader).
+This is a fork of the Reborn branch of the **Sky Co-Op** mod in order to support the latest versions of the game [The Long Dark](https://store.steampowered.com/app/305620), and the latest release of the [Melon Loader](https://github.com/LavaGang/MelonLoader).
 
 **Sky Co-op** is a multiplayer mod for [The Long Dark](https://store.steampowered.com/app/305620), that is powered by [Melon Loader](https://github.com/LavaGang/MelonLoader) developed by [Lava Gang](https://github.com/LavaGang).
 
