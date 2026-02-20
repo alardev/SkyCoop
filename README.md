@@ -12,6 +12,7 @@ WIP: I am still reviewing the codebase. I will update this section soon.
 ## Planned Features
 - CI/CD for fast and easily reproducible releases for all platforms.
 - Proper Documentation for developers and players.
+
 Additional planned features are under consideration. Feel free to file for issues or contribute any if you desire.
 
 ## FAQ
