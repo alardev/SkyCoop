@@ -1060,114 +1060,114 @@ namespace SkyCoopServer
             return (long)m.ToCharArray().Select((c, i) => Math.Pow(i, c % 5) * Math.Max(Math.Sqrt(c), i)).Sum();
         }
 
-        public enum CardType
-        {
-            Hidden = -2,
-            Empty = -1,
-            Two = 0,
-            Three,
-            Four,
-            Five,
-            Six,
-            Seven,
-            Eight,
-            Nine,
-            Ten,
-            Jack,
-            Queen,
-            King,
-            Ace,
+        // public enum CardType
+        // {
+        //     Hidden = -2,
+        //     Empty = -1,
+        //     Two = 0,
+        //     Three,
+        //     Four,
+        //     Five,
+        //     Six,
+        //     Seven,
+        //     Eight,
+        //     Nine,
+        //     Ten,
+        //     Jack,
+        //     Queen,
+        //     King,
+        //     Ace,
 
-            Count,
-        }
+        //     Count,
+        // }
 
-        public enum CardSuit
-        {
-            Hidden = -1,
-            Clubs = 0,
-            Spades,
-            Hearts,
-            Diamonds,
+        // public enum CardSuit
+        // {
+        //     Hidden = -1,
+        //     Clubs = 0,
+        //     Spades,
+        //     Hearts,
+        //     Diamonds,
 
-            Count,
-        }
+        //     Count,
+        // }
 
-        public enum HandRank
-        {
-            HighCard,
-            Pair,
-            TwoPair,
-            ThreeOfAKind,
-            Straight,
-            Flush,
-            FullHouse,
-            FourOfAKind,
-            StraightFlush,
-            RoyalFlush
-        }
+        // public enum HandRank
+        // {
+        //     HighCard,
+        //     Pair,
+        //     TwoPair,
+        //     ThreeOfAKind,
+        //     Straight,
+        //     Flush,
+        //     FullHouse,
+        //     FourOfAKind,
+        //     StraightFlush,
+        //     RoyalFlush
+        // }
 
-        public class PlayingCard
-        {
-            public CardType m_Type = CardType.Two;
-            public CardSuit m_Suit = CardSuit.Clubs;
+        // public class PlayingCard
+        // {
+        //     public CardType m_Type = CardType.Two;
+        //     public CardSuit m_Suit = CardSuit.Clubs;
 
-            public PlayingCard(CardType type, CardSuit suit)
-            {
-                m_Type = type;
-                m_Suit = suit;
-            }
-        }
+        //     public PlayingCard(CardType type, CardSuit suit)
+        //     {
+        //         m_Type = type;
+        //         m_Suit = suit;
+        //     }
+        // }
 
-        public class CardsDeck
-        {
-            public List<PlayingCard> m_Cards = new List<PlayingCard>();
+        // public class CardsDeck
+        // {
+        //     public List<PlayingCard> m_Cards = new List<PlayingCard>();
 
-            public List<PlayingCard> ShuffleDeck(List<PlayingCard> Deck)
-            {
-                System.Random RNG = new System.Random();
-                for (int i = 0; i < Deck.Count; i++)
-                {
-                    var temp = Deck[i];
-                    var index = RNG.Next(0, Deck.Count);
-                    Deck[i] = Deck[index];
-                    Deck[index] = temp;
-                }
-                return Deck;
-            }
-            public void ShuffleDeck()
-            {
-                m_Cards = ShuffleDeck(m_Cards);
-            }
+        //     public List<PlayingCard> ShuffleDeck(List<PlayingCard> Deck)
+        //     {
+        //         System.Random RNG = new System.Random();
+        //         for (int i = 0; i < Deck.Count; i++)
+        //         {
+        //             var temp = Deck[i];
+        //             var index = RNG.Next(0, Deck.Count);
+        //             Deck[i] = Deck[index];
+        //             Deck[index] = temp;
+        //         }
+        //         return Deck;
+        //     }
+        //     public void ShuffleDeck()
+        //     {
+        //         m_Cards = ShuffleDeck(m_Cards);
+        //     }
 
-            public void LogAllCards()
-            {
-                for (int i = 0;i < m_Cards.Count; i++)
-                {
-                    SkyCoopServer.Logger.Log($"{i}. {m_Cards[i].m_Type} of {m_Cards[i].m_Suit}");
-                }
-            }
+        //     public void LogAllCards()
+        //     {
+        //         for (int i = 0;i < m_Cards.Count; i++)
+        //         {
+        //             SkyCoopServer.Logger.Log($"{i}. {m_Cards[i].m_Type} of {m_Cards[i].m_Suit}");
+        //         }
+        //     }
 
-            public void AddCard(CardType Type, CardSuit Suit)
-            {
-                m_Cards.Add(new PlayingCard(Type, Suit));
-            }
-            public void AddCard(int Type, int Suit)
-            {
-                AddCard((CardType)Type, (CardSuit)Suit);
-            }
+        //     public void AddCard(CardType Type, CardSuit Suit)
+        //     {
+        //         m_Cards.Add(new PlayingCard(Type, Suit));
+        //     }
+        //     public void AddCard(int Type, int Suit)
+        //     {
+        //         AddCard((CardType)Type, (CardSuit)Suit);
+        //     }
 
-            public void PopulateCards()
-            {
-                m_Cards.Clear();
-                for (int iCardType = 0; iCardType < (int)CardType.Count; iCardType++)
-                {
-                    for (int iSuit = 0; iSuit < (int)CardSuit.Count; iSuit++)
-                    {
-                        AddCard(iCardType, iSuit);
-                    }
-                }
-            }
-        }
+        //     public void PopulateCards()
+        //     {
+        //         m_Cards.Clear();
+        //         for (int iCardType = 0; iCardType < (int)CardType.Count; iCardType++)
+        //         {
+        //             for (int iSuit = 0; iSuit < (int)CardSuit.Count; iSuit++)
+        //             {
+        //                 AddCard(iCardType, iSuit);
+        //             }
+        //         }
+        //     }
+        // }
         public class PropDataSave
         {
             public List<PropData> props { get; set; }

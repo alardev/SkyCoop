@@ -12,6 +12,7 @@ using Il2CppTMPro;
 using UnityEngine.UIElements;
 using Il2CppNodeCanvas.BehaviourTrees;
 using Il2CppNodeCanvas.StateMachines;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace SkyCoop
 {
@@ -36,12 +37,12 @@ namespace SkyCoop
             ClassInjector.RegisterTypeInIl2Cpp<NetworkPlayerDummy>();
             ClassInjector.RegisterTypeInIl2Cpp<DangerCircleZone>();
             ClassInjector.RegisterTypeInIl2Cpp<ForcedFire>();
-            ClassInjector.RegisterTypeInIl2Cpp<CardGameProp>();
-            ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmProp>();
-            ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmPlayer>();
-            ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmJoin>();
-            ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmPlay>();
-            ClassInjector.RegisterTypeInIl2Cpp<TalkingFish>();
+            // ClassInjector.RegisterTypeInIl2Cpp<CardGameProp>();
+            // ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmProp>();
+            // ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmPlayer>();
+            // ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmJoin>();
+            // ClassInjector.RegisterTypeInIl2Cpp<TexasHoldEmPlay>();
+            // ClassInjector.RegisterTypeInIl2Cpp<TalkingFish>();
             ClassInjector.RegisterTypeInIl2Cpp<PropsEditorVisuzlier>();
             ClassInjector.RegisterTypeInIl2Cpp<GenericStatusBarSpawnerHook>();
             ClassInjector.RegisterTypeInIl2Cpp<TeammateBar>();
@@ -377,7 +378,7 @@ namespace SkyCoop
             public GameObject m_BeardMesh = null;
             public GameObject m_EyebrowsMesh = null;
 
-            public AudioSource m_TalkingFishAudioSource;
+            // public AudioSource m_TalkingFishAudioSource;
 
             public CameraAttention m_CameraAttention;
 
@@ -479,13 +480,13 @@ namespace SkyCoop
                 }
             }
 
-            public void DoFishTalk()
-            {
-                if (m_TalkingFishAudioSource)
-                {
-                    m_TalkingFishAudioSource.Play();
-                }
-            }
+            // public void DoFishTalk()
+            // {
+            //     if (m_TalkingFishAudioSource)
+            //     {
+            //         m_TalkingFishAudioSource.Play();
+            //     }
+            // }
 
             public void SetGear(string GearName, int GearVariant)
             {
@@ -618,6 +619,7 @@ namespace SkyCoop
                 }
             }
 
+            [HideFromIl2Cpp]
             public void SetClothing(DataStr.ClothingData Data)
             {
                 m_VisualData.m_ClothingData = Data;
@@ -731,16 +733,16 @@ namespace SkyCoop
                 AddPlaceholderHoldingGear(this, "GEAR_Hammer", new Vector3(0.09f, 0.11f, -0.1f), new Vector3(80, 0, 0));
                 AddPlaceholderHoldingGear(this, "GEAR_Prybar", new Vector3(0.09f, 0.1f, -0.02f), new Vector3(350, 0, 0));
 
-                GameObject FishKnife = AddPlaceholderHoldingGearFromBundle(this, "TalkingFish", "GEAR_FishKnife", new Vector3(0.09f, 0.07f, -0.085f), new Vector3(75, 0, 0), GearHandPose.GenericHold);
+                // GameObject FishKnife = AddPlaceholderHoldingGearFromBundle(this, "TalkingFish", "GEAR_FishKnife", new Vector3(0.09f, 0.07f, -0.085f), new Vector3(75, 0, 0), GearHandPose.GenericHold);
 
-                if (FishKnife)
-                {
-                    Comps.TalkingFish Comp = FishKnife.AddComponent<Comps.TalkingFish>();
-                    Comp.m_AudioSource = FishKnife.GetComponent<AudioSource>();
-                    Comp.SetupMoth();
-                    m_TalkingFishAudioSource = Comp.m_AudioSource;
-                    GearsSync.ApplyTextureDoner(FishKnife, "GEAR_FishKnife");
-                }
+                // if (FishKnife)
+                // {
+                //     Comps.TalkingFish Comp = FishKnife.AddComponent<Comps.TalkingFish>();
+                //     Comp.m_AudioSource = FishKnife.GetComponent<AudioSource>();
+                //     Comp.SetupMoth();
+                //     m_TalkingFishAudioSource = Comp.m_AudioSource;
+                //     GearsSync.ApplyTextureDoner(FishKnife, "GEAR_FishKnife");
+                // }
 
 
                 m_Helmet = AddCookpot(new Vector3(0f, 0.245f, 0f), new Vector3(0, 180, 180), 1.03f);
@@ -1426,487 +1428,487 @@ namespace SkyCoop
                 }
             }
         }
-        public class CardGameProp : MonoBehaviour
-        {
-            public CardGameProp(IntPtr ptr) : base(ptr) { }
+        // public class CardGameProp : MonoBehaviour
+        // {
+        //     public CardGameProp(IntPtr ptr) : base(ptr) { }
 
-            public string m_GUID = "";
+        //     public string m_GUID = "";
 
-            public void SetInteraction(string InteractionText, string GUID)
-            {
-                LocalizedString Str = new LocalizedString();
-                Str.m_LocalizationID = InteractionText;
-                SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
-                SI.m_DefaultHoverText = Str;
-                SI.HoverText = InteractionText;
-                SI.m_CanInteract = true;
-                m_GUID = GUID;
-            }
+        //     public void SetInteraction(string InteractionText, string GUID)
+        //     {
+        //         LocalizedString Str = new LocalizedString();
+        //         Str.m_LocalizationID = InteractionText;
+        //         SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
+        //         SI.m_DefaultHoverText = Str;
+        //         SI.HoverText = InteractionText;
+        //         SI.m_CanInteract = true;
+        //         m_GUID = GUID;
+        //     }
 
-            public void TryUse()
-            {
-                PlayersManager.s_LastTryInteractionObject = gameObject;
-                ClientSend.SendTryInteract(m_GUID);
-            }
-        }
+        //     public void TryUse()
+        //     {
+        //         PlayersManager.s_LastTryInteractionObject = gameObject;
+        //         ClientSend.SendTryInteract(m_GUID);
+        //     }
+        // }
 
-        public class TexasHoldEmPlayer : MonoBehaviour
-        {
-            public TexasHoldEmPlayer(IntPtr ptr) : base(ptr) { }
+        // public class TexasHoldEmPlayer : MonoBehaviour
+        // {
+        //     public TexasHoldEmPlayer(IntPtr ptr) : base(ptr) { }
 
-            public TexasHoldEmProp m_Game = null;
+        //     public TexasHoldEmProp m_Game = null;
 
-            public int m_PlayerID = -1;
-            public int m_PokerIndex = 0;
+        //     public int m_PlayerID = -1;
+        //     public int m_PokerIndex = 0;
 
-            public int m_Bet = 0;
-            public int m_Chips = 0;
+        //     public int m_Bet = 0;
+        //     public int m_Chips = 0;
 
-            public TextMeshPro m_ChipsLable;
-            public TextMeshPro m_BetLable;
-            public TextMeshPro m_RaisAmount;
+        //     public TextMeshPro m_ChipsLable;
+        //     public TextMeshPro m_BetLable;
+        //     public TextMeshPro m_RaisAmount;
 
-            public List<GameObject> m_Cards = new List<GameObject>();
+        //     public List<GameObject> m_Cards = new List<GameObject>();
 
-            private bool s_StartCalled = false;
+        //     private bool s_StartCalled = false;
 
-            void Start()
-            {
-                ManualStart();
-            }
+        //     void Start()
+        //     {
+        //         ManualStart();
+        //     }
 
-            public void ManualStart()
-            {
-                if (!s_StartCalled)
-                {
-                    s_StartCalled = true;
-                }
-                else
-                {
-                    return;
-                }
+        //     public void ManualStart()
+        //     {
+        //         if (!s_StartCalled)
+        //         {
+        //             s_StartCalled = true;
+        //         }
+        //         else
+        //         {
+        //             return;
+        //         }
                 
-                // 0 Card0
-                // 1 Card1
-                // 2 Bet
-                // 3 Chips
+        //         // 0 Card0
+        //         // 1 Card1
+        //         // 2 Bet
+        //         // 3 Chips
 
-                m_Cards.Add(transform.GetChild(0).gameObject);
-                transform.GetChild(0).gameObject.SetActive(false);
+        //         m_Cards.Add(transform.GetChild(0).gameObject);
+        //         transform.GetChild(0).gameObject.SetActive(false);
 
-                m_Cards.Add(transform.GetChild(1).gameObject);
-                transform.GetChild(1).gameObject.SetActive(false);
+        //         m_Cards.Add(transform.GetChild(1).gameObject);
+        //         transform.GetChild(1).gameObject.SetActive(false);
 
-                m_BetLable = transform.GetChild(2).GetComponent<TextMeshPro>();
-                m_ChipsLable = transform.GetChild(3).GetComponent<TextMeshPro>();
-            }
+        //         m_BetLable = transform.GetChild(2).GetComponent<TextMeshPro>();
+        //         m_ChipsLable = transform.GetChild(3).GetComponent<TextMeshPro>();
+        //     }
 
-            void Update()
-            {
-                if (m_BetLable)
-                {
-                    m_BetLable.SetText($"{m_Bet}$");
-                }
-                if (m_ChipsLable)
-                {
-                    m_ChipsLable.SetText($"{m_Chips}$");
-                }
-            }
+        //     void Update()
+        //     {
+        //         if (m_BetLable)
+        //         {
+        //             m_BetLable.SetText($"{m_Bet}$");
+        //         }
+        //         if (m_ChipsLable)
+        //         {
+        //             m_ChipsLable.SetText($"{m_Chips}$");
+        //         }
+        //     }
 
-            public void SetCard(int CardID, int CardType, int CardSuit)
-            {
-                GameObject CardObj = m_Cards[CardID];
-                if (CardType == -1)
-                {
-                    CardObj.SetActive(false);
-                    return;
-                }
-                Renderer Mesh = CardObj.transform.GetChild(0).GetComponent<Renderer>();
-                Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material> NewMatsArr = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material>(Mesh.materials.Length);
-                for (int i = 0; i < NewMatsArr.Length; i++)
-                {
-                    NewMatsArr[i] = Mesh.materials[i];
-                    if(i == 0)
-                    {
-                        NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
-                    }
-                }
-                Mesh.SetMaterialArray(NewMatsArr);
-                CardObj.SetActive(true);
-            }
-        }
+        //     public void SetCard(int CardID, int CardType, int CardSuit)
+        //     {
+        //         GameObject CardObj = m_Cards[CardID];
+        //         if (CardType == -1)
+        //         {
+        //             CardObj.SetActive(false);
+        //             return;
+        //         }
+        //         Renderer Mesh = CardObj.transform.GetChild(0).GetComponent<Renderer>();
+        //         Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material> NewMatsArr = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material>(Mesh.materials.Length);
+        //         for (int i = 0; i < NewMatsArr.Length; i++)
+        //         {
+        //             NewMatsArr[i] = Mesh.materials[i];
+        //             if(i == 0)
+        //             {
+        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
+        //             }
+        //         }
+        //         Mesh.SetMaterialArray(NewMatsArr);
+        //         CardObj.SetActive(true);
+        //     }
+        // }
 
 
-        public class TexasHoldEmProp : MonoBehaviour
-        {
-            public TexasHoldEmProp(IntPtr ptr) : base(ptr) { }
+        // public class TexasHoldEmProp : MonoBehaviour
+        // {
+        //     public TexasHoldEmProp(IntPtr ptr) : base(ptr) { }
 
-            public string m_GUID = "";
+        //     public string m_GUID = "";
 
-            public int m_CurrentPlayerTurn = -1;
-            public int m_Dealer = 0;
+        //     public int m_CurrentPlayerTurn = -1;
+        //     public int m_Dealer = 0;
 
-            public List<TexasHoldEmPlayer> m_Players = new List<TexasHoldEmPlayer>();
-            public List<GameObject> m_CommunityCards = new List<GameObject>();
-            public List<GameObject> m_JoinObjects = new List<GameObject>();
-            public List<GameObject> m_PlayObjects = new List<GameObject>();
+        //     public List<TexasHoldEmPlayer> m_Players = new List<TexasHoldEmPlayer>();
+        //     public List<GameObject> m_CommunityCards = new List<GameObject>();
+        //     public List<GameObject> m_JoinObjects = new List<GameObject>();
+        //     public List<GameObject> m_PlayObjects = new List<GameObject>();
 
-            private bool s_StartCalled = false;
+        //     private bool s_StartCalled = false;
 
-            void Start()
-            {
-                ManualStart();
-            }
+        //     void Start()
+        //     {
+        //         ManualStart();
+        //     }
 
-            public List<int> GetBets()
-            {
-                List<int> Bets = new List<int>();
+        //     public List<int> GetBets()
+        //     {
+        //         List<int> Bets = new List<int>();
 
-                foreach (TexasHoldEmPlayer Player in m_Players)
-                {
-                    Bets.Add(Player.m_Bet);
-                }
+        //         foreach (TexasHoldEmPlayer Player in m_Players)
+        //         {
+        //             Bets.Add(Player.m_Bet);
+        //         }
 
-                return Bets;
-            }
+        //         return Bets;
+        //     }
 
-            public int GetMaxBet()
-            {
-                return GetBets().Max();
-            }
+        //     public int GetMaxBet()
+        //     {
+        //         return GetBets().Max();
+        //     }
 
-            public bool CanCheck(TexasHoldEmPlayer Player)
-            {
-                return GetMaxBet() <= Player.m_Bet;
-            }
+        //     public bool CanCheck(TexasHoldEmPlayer Player)
+        //     {
+        //         return GetMaxBet() <= Player.m_Bet;
+        //     }
 
-            public bool CanRaise(TexasHoldEmPlayer Player)
-            {
-                if (GetMaxBet() == 0)
-                {
-                    return false;
-                }
-                if(GetMaxBet() > Player.m_Bet + Player.m_Chips)
-                {
-                    return false;
-                }
-                return true;
-            }
+        //     public bool CanRaise(TexasHoldEmPlayer Player)
+        //     {
+        //         if (GetMaxBet() == 0)
+        //         {
+        //             return false;
+        //         }
+        //         if(GetMaxBet() > Player.m_Bet + Player.m_Chips)
+        //         {
+        //             return false;
+        //         }
+        //         return true;
+        //     }
 
-            public bool CanCall(TexasHoldEmPlayer Player)
-            {
-                if(GetMaxBet() == Player.m_Bet)
-                {
-                    return false;
-                }
+        //     public bool CanCall(TexasHoldEmPlayer Player)
+        //     {
+        //         if(GetMaxBet() == Player.m_Bet)
+        //         {
+        //             return false;
+        //         }
                 
-                int callAmount = GetBets().Max() - Player.m_Bet;
-                if (callAmount > Player.m_Bet)
-                {
-                    return false;
-                }
-                return true;
-            }
+        //         int callAmount = GetBets().Max() - Player.m_Bet;
+        //         if (callAmount > Player.m_Bet)
+        //         {
+        //             return false;
+        //         }
+        //         return true;
+        //     }
 
-            public void ManualStart()
-            {
-                if (!s_StartCalled)
-                {
-                    s_StartCalled = true;
-                }
-                else
-                {
-                    return;
-                }
-                for (int i = 0; i < 4; i++)
-                {
-                    GameObject PlayerObj = transform.GetChild(i).gameObject;
-                    TexasHoldEmPlayer Comp = PlayerObj.AddComponent<TexasHoldEmPlayer>();
-                    Comp.m_PokerIndex = i;
-                    Comp.m_Game = this;
-                    Comp.ManualStart();
-                    m_Players.Add(Comp);
-                    PlayerObj.SetActive(false);
-                }
-                for (int i = 0; i < 5; i++)
-                {
-                    GameObject Card = transform.GetChild(4).GetChild(i).gameObject;
-                    Card.gameObject.SetActive(false);
-                    m_CommunityCards.Add(Card);
-                }
-                for (int i = 0; i < 4; i++)
-                {
-                    GameObject JoinObj = transform.GetChild(5+i).gameObject;
-                    TexasHoldEmJoin Comp = JoinObj.AddComponent<TexasHoldEmJoin>();
-                    Comp.SetInteraction($"Join as player {i+1} ", m_GUID, i);
-                    m_JoinObjects.Add(JoinObj);
-                }
-                for (int i = 0; i < 4; i++)
-                {
-                    GameObject PlayObj = transform.GetChild(9 + i).gameObject;
-                    TexasHoldEmPlay Comp = PlayObj.AddComponent<TexasHoldEmPlay>();
-                    Comp.SetInteraction($"Play", m_Players[i]);
-                    m_PlayObjects.Add(PlayObj);
-                }
+        //     public void ManualStart()
+        //     {
+        //         if (!s_StartCalled)
+        //         {
+        //             s_StartCalled = true;
+        //         }
+        //         else
+        //         {
+        //             return;
+        //         }
+        //         for (int i = 0; i < 4; i++)
+        //         {
+        //             GameObject PlayerObj = transform.GetChild(i).gameObject;
+        //             TexasHoldEmPlayer Comp = PlayerObj.AddComponent<TexasHoldEmPlayer>();
+        //             Comp.m_PokerIndex = i;
+        //             Comp.m_Game = this;
+        //             Comp.ManualStart();
+        //             m_Players.Add(Comp);
+        //             PlayerObj.SetActive(false);
+        //         }
+        //         for (int i = 0; i < 5; i++)
+        //         {
+        //             GameObject Card = transform.GetChild(4).GetChild(i).gameObject;
+        //             Card.gameObject.SetActive(false);
+        //             m_CommunityCards.Add(Card);
+        //         }
+        //         for (int i = 0; i < 4; i++)
+        //         {
+        //             GameObject JoinObj = transform.GetChild(5+i).gameObject;
+        //             TexasHoldEmJoin Comp = JoinObj.AddComponent<TexasHoldEmJoin>();
+        //             Comp.SetInteraction($"Join as player {i+1} ", m_GUID, i);
+        //             m_JoinObjects.Add(JoinObj);
+        //         }
+        //         for (int i = 0; i < 4; i++)
+        //         {
+        //             GameObject PlayObj = transform.GetChild(9 + i).gameObject;
+        //             TexasHoldEmPlay Comp = PlayObj.AddComponent<TexasHoldEmPlay>();
+        //             Comp.SetInteraction($"Play", m_Players[i]);
+        //             m_PlayObjects.Add(PlayObj);
+        //         }
 
-                // Game checks coliders of child objects, so eh, have to make them parnetless.
-                foreach (GameObject Obj in m_JoinObjects)
-                {
-                    Obj.transform.SetParent(null);
-                }
-                foreach (GameObject Obj in m_PlayObjects)
-                {
-                    Obj.transform.SetParent(null);
-                }
-            }
+        //         // Game checks coliders of child objects, so eh, have to make them parnetless.
+        //         foreach (GameObject Obj in m_JoinObjects)
+        //         {
+        //             Obj.transform.SetParent(null);
+        //         }
+        //         foreach (GameObject Obj in m_PlayObjects)
+        //         {
+        //             Obj.transform.SetParent(null);
+        //         }
+        //     }
 
-            public void SetGUID(string GUID)
-            {
-                m_GUID = GUID;
-            }
+        //     public void SetGUID(string GUID)
+        //     {
+        //         m_GUID = GUID;
+        //     }
 
-            public void SetCard(int PokerID, int CardID, int CardType, int CardSuit)
-            {
-                SkyCoop.Logger.Log($"SetCard (Player {PokerID}) {CardID} {(DataStr.CardType)CardType} of {(DataStr.CardSuit)CardSuit}");
-                m_Players[PokerID].SetCard(CardID, CardType, CardSuit);
-            }
+        //     public void SetCard(int PokerID, int CardID, int CardType, int CardSuit)
+        //     {
+        //         SkyCoop.Logger.Log($"SetCard (Player {PokerID}) {CardID} {(DataStr.CardType)CardType} of {(DataStr.CardSuit)CardSuit}");
+        //         m_Players[PokerID].SetCard(CardID, CardType, CardSuit);
+        //     }
 
-            public void SetCard(int CardID, int CardType, int CardSuit)
-            {
-                SkyCoop.Logger.Log($"SetCard (Community) {CardID} {(DataStr.CardType)CardType} of {(DataStr.CardSuit)CardSuit}");
-                GameObject CardObj = m_CommunityCards[CardID];
-                if (CardType == -1)
-                {
-                    CardObj.SetActive(false);
-                    return;
-                }
+        //     public void SetCard(int CardID, int CardType, int CardSuit)
+        //     {
+        //         SkyCoop.Logger.Log($"SetCard (Community) {CardID} {(DataStr.CardType)CardType} of {(DataStr.CardSuit)CardSuit}");
+        //         GameObject CardObj = m_CommunityCards[CardID];
+        //         if (CardType == -1)
+        //         {
+        //             CardObj.SetActive(false);
+        //             return;
+        //         }
 
                 
-                Renderer Mesh = CardObj.transform.GetChild(0).GetComponent<Renderer>();
-                Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material> NewMatsArr = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material>(Mesh.materials.Length);
-                for (int i = 0; i < NewMatsArr.Length; i++)
-                {
-                    NewMatsArr[i] = Mesh.materials[i];
-                    if (i == 0)
-                    {
-                        NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
-                    }
-                }
-                Mesh.SetMaterialArray(NewMatsArr);
-                CardObj.SetActive(true);
-            }
+        //         Renderer Mesh = CardObj.transform.GetChild(0).GetComponent<Renderer>();
+        //         Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material> NewMatsArr = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Material>(Mesh.materials.Length);
+        //         for (int i = 0; i < NewMatsArr.Length; i++)
+        //         {
+        //             NewMatsArr[i] = Mesh.materials[i];
+        //             if (i == 0)
+        //             {
+        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
+        //             }
+        //         }
+        //         Mesh.SetMaterialArray(NewMatsArr);
+        //         CardObj.SetActive(true);
+        //     }
 
-            public void SetCurrentPlayerTurn(int Turn)
-            {
-                m_CurrentPlayerTurn = Turn;
-            }
+        //     public void SetCurrentPlayerTurn(int Turn)
+        //     {
+        //         m_CurrentPlayerTurn = Turn;
+        //     }
 
-            public void SetDealer(int Dealer)
-            {
-                m_Dealer = Dealer;
-            }
+        //     public void SetDealer(int Dealer)
+        //     {
+        //         m_Dealer = Dealer;
+        //     }
 
-            public void SetPlayerBet(int PlayerID, int Bet)
-            {
-                m_Players[PlayerID].m_Bet = Bet;
-            }
+        //     public void SetPlayerBet(int PlayerID, int Bet)
+        //     {
+        //         m_Players[PlayerID].m_Bet = Bet;
+        //     }
 
-            public void SetPlayerChips(int PlayerID, int Chips)
-            {
-                m_Players[PlayerID].m_Chips = Chips;
-            }
+        //     public void SetPlayerChips(int PlayerID, int Chips)
+        //     {
+        //         m_Players[PlayerID].m_Chips = Chips;
+        //     }
 
-            public void RegisterPlayer(int PlayerID, int PokerIndex)
-            {
-                TexasHoldEmPlayer Comp = m_Players[PokerIndex];
-                Comp.m_PlayerID = PlayerID;
-                Comp.gameObject.SetActive(true);
-                m_JoinObjects[PokerIndex].SetActive(false);
-            }
+        //     public void RegisterPlayer(int PlayerID, int PokerIndex)
+        //     {
+        //         TexasHoldEmPlayer Comp = m_Players[PokerIndex];
+        //         Comp.m_PlayerID = PlayerID;
+        //         Comp.gameObject.SetActive(true);
+        //         m_JoinObjects[PokerIndex].SetActive(false);
+        //     }
 
-            public void OnDestroy()
-            {
-                foreach (GameObject JoinObj in m_JoinObjects)
-                {
-                    UnityEngine.Object.Destroy(JoinObj);
-                }
-            }
+        //     public void OnDestroy()
+        //     {
+        //         foreach (GameObject JoinObj in m_JoinObjects)
+        //         {
+        //             UnityEngine.Object.Destroy(JoinObj);
+        //         }
+        //     }
 
-            void Update()
-            {
-                foreach (GameObject PlayObj in m_PlayObjects)
-                {
-                    TexasHoldEmPlay Play = PlayObj.GetComponent<TexasHoldEmPlay>();
-                    if (Play.m_Player)
-                    {
-                        PlayObj.SetActive(Play.m_Player.m_PokerIndex == m_CurrentPlayerTurn);
-                    }
-                }
-            }
-        }
+        //     void Update()
+        //     {
+        //         foreach (GameObject PlayObj in m_PlayObjects)
+        //         {
+        //             TexasHoldEmPlay Play = PlayObj.GetComponent<TexasHoldEmPlay>();
+        //             if (Play.m_Player)
+        //             {
+        //                 PlayObj.SetActive(Play.m_Player.m_PokerIndex == m_CurrentPlayerTurn);
+        //             }
+        //         }
+        //     }
+        // }
 
-        public class TexasHoldEmJoin : MonoBehaviour
-        {
-            public TexasHoldEmJoin(IntPtr ptr) : base(ptr) { }
+        // public class TexasHoldEmJoin : MonoBehaviour
+        // {
+        //     public TexasHoldEmJoin(IntPtr ptr) : base(ptr) { }
 
-            public string m_GUID = "";
-            public int m_PokerID = 0;
+        //     public string m_GUID = "";
+        //     public int m_PokerID = 0;
 
-            public void SetInteraction(string InteractionText, string GUID, int PokerIndex)
-            {
-                LocalizedString Str = new LocalizedString();
-                Str.m_LocalizationID = InteractionText;
-                SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
-                SI.m_DefaultHoverText = Str;
-                SI.HoverText = InteractionText;
-                SI.m_CanInteract = true;
-                m_GUID = GUID;
-                m_PokerID = PokerIndex;
-            }
+        //     public void SetInteraction(string InteractionText, string GUID, int PokerIndex)
+        //     {
+        //         LocalizedString Str = new LocalizedString();
+        //         Str.m_LocalizationID = InteractionText;
+        //         SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
+        //         SI.m_DefaultHoverText = Str;
+        //         SI.HoverText = InteractionText;
+        //         SI.m_CanInteract = true;
+        //         m_GUID = GUID;
+        //         m_PokerID = PokerIndex;
+        //     }
 
-            public void TryUse()
-            {
-                ClientSend.SendCardGameAction(m_GUID, 0, m_PokerID);
-            }
-        }
+        //     public void TryUse()
+        //     {
+        //         ClientSend.SendCardGameAction(m_GUID, 0, m_PokerID);
+        //     }
+        // }
 
-        public class TexasHoldEmPlay : MonoBehaviour
-        {
-            public TexasHoldEmPlay(IntPtr ptr) : base(ptr) { }
+        // public class TexasHoldEmPlay : MonoBehaviour
+        // {
+        //     public TexasHoldEmPlay(IntPtr ptr) : base(ptr) { }
 
-            public TexasHoldEmPlayer m_Player;
+        //     public TexasHoldEmPlayer m_Player;
 
-            public void SetInteraction(string InteractionText, TexasHoldEmPlayer Player)
-            {
-                LocalizedString Str = new LocalizedString();
-                Str.m_LocalizationID = InteractionText;
-                SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
-                SI.m_DefaultHoverText = Str;
-                SI.HoverText = InteractionText;
-                SI.m_CanInteract = true;
-                m_Player = Player;
-            }
+        //     public void SetInteraction(string InteractionText, TexasHoldEmPlayer Player)
+        //     {
+        //         LocalizedString Str = new LocalizedString();
+        //         Str.m_LocalizationID = InteractionText;
+        //         SimpleInteraction SI = gameObject.AddComponent<SimpleInteraction>();
+        //         SI.m_DefaultHoverText = Str;
+        //         SI.HoverText = InteractionText;
+        //         SI.m_CanInteract = true;
+        //         m_Player = Player;
+        //     }
 
-            public void SendAction(int Action)
-            {
-                ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, Action, m_Player.m_PokerIndex);
-            }
+        //     public void SendAction(int Action)
+        //     {
+        //         ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, Action, m_Player.m_PokerIndex);
+        //     }
 
-            public void SendActionAllIN()
-            {
-                ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, 4, m_Player.m_PokerIndex, m_Player.m_Chips);
-            }
+        //     public void SendActionAllIN()
+        //     {
+        //         ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, 4, m_Player.m_PokerIndex, m_Player.m_Chips);
+        //     }
 
-            public void SendActionRaise(int Amount)
-            {
-                ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, 4, m_Player.m_PokerIndex, Amount);
-            }
+        //     public void SendActionRaise(int Amount)
+        //     {
+        //         ClientSend.SendCardGameAction(m_Player.m_Game.m_GUID, 4, m_Player.m_PokerIndex, Amount);
+        //     }
 
-            public void OpenPicker()
-            {
-                Panel_PickUnits Panel = InterfaceManager.GetPanel<Panel_PickUnits>();
-                if (Panel)
-                {
-                    Panel.Enable(true);
-                    Panel.m_GearItem = null;
-                    Panel.m_numUnits = 1;
-                    Panel.m_maxUnits = m_Player.m_Chips;
-                    MenuHook.s_RaisBetHook = this;
-                    Panel.Refresh();
-                }
-            }
+        //     public void OpenPicker()
+        //     {
+        //         Panel_PickUnits Panel = InterfaceManager.GetPanel<Panel_PickUnits>();
+        //         if (Panel)
+        //         {
+        //             Panel.Enable(true);
+        //             Panel.m_GearItem = null;
+        //             Panel.m_numUnits = 1;
+        //             Panel.m_maxUnits = m_Player.m_Chips;
+        //             MenuHook.s_RaisBetHook = this;
+        //             Panel.Refresh();
+        //         }
+        //     }
 
-            public void TryUse()
-            {
-                Panel_ActionPicker Panel = InterfaceManager.GetPanel<Panel_ActionPicker>();
-                if (Panel)
-                {
-                    Panel.Enable(true);
-                    Panel.m_ActionPickerItemDataList.Clear();
-                    Action act1 = new Action(() => SendAction(1));
-                    Action act2 = new Action(() => SendAction(2));
-                    Action act3 = new Action(() => SendAction(3));
-                    Action act4 = new Action(() => OpenPicker());
+        //     public void TryUse()
+        //     {
+        //         Panel_ActionPicker Panel = InterfaceManager.GetPanel<Panel_ActionPicker>();
+        //         if (Panel)
+        //         {
+        //             Panel.Enable(true);
+        //             Panel.m_ActionPickerItemDataList.Clear();
+        //             Action act1 = new Action(() => SendAction(1));
+        //             Action act2 = new Action(() => SendAction(2));
+        //             Action act3 = new Action(() => SendAction(3));
+        //             Action act4 = new Action(() => OpenPicker());
 
-                    Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_Radial_decoy", "Fold", act1));
+        //             Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_Radial_decoy", "Fold", act1));
 
-                    if(m_Player && m_Player.m_Game)
-                    {
-                        if (m_Player.m_Game.CanCheck(m_Player))
-                        {
-                            Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_tab_passTime1", "Check", act2));
-                        }
-                        if (m_Player.m_Game.CanCall(m_Player))
-                        {
-                            Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_SideMIssions", "Call", act3));
-                        }
-                        if (m_Player.m_Game.CanRaise(m_Player))
-                        {
-                            Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_clothing_outer", "Raise", act4));
-                        }
-                    }
+        //             if(m_Player && m_Player.m_Game)
+        //             {
+        //                 if (m_Player.m_Game.CanCheck(m_Player))
+        //                 {
+        //                     Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_tab_passTime1", "Check", act2));
+        //                 }
+        //                 if (m_Player.m_Game.CanCall(m_Player))
+        //                 {
+        //                     Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_SideMIssions", "Call", act3));
+        //                 }
+        //                 if (m_Player.m_Game.CanRaise(m_Player))
+        //                 {
+        //                     Panel.m_ActionPickerItemDataList.Add(new ActionPickerItemData("ico_clothing_outer", "Raise", act4));
+        //                 }
+        //             }
 
-                    Panel.m_ObjectInteractedWith = null;
-                    Panel.EnableWithCurrentList();
-                }
-            }
-        }
-        public class TalkingFish : MonoBehaviour
-        {
-            public TalkingFish(IntPtr ptr) : base(ptr) { }
+        //             Panel.m_ObjectInteractedWith = null;
+        //             Panel.EnableWithCurrentList();
+        //         }
+        //     }
+        // }
+        // public class TalkingFish : MonoBehaviour
+        // {
+        //     public TalkingFish(IntPtr ptr) : base(ptr) { }
 
-            public AudioSource m_AudioSource;
-            public Transform m_MouthBottom;
-            public float m_MouthMinY = 0.0004f;
-            public float m_MouthMaxY = 0.0006f;
+        //     public AudioSource m_AudioSource;
+        //     public Transform m_MouthBottom;
+        //     public float m_MouthMinY = 0.0004f;
+        //     public float m_MouthMaxY = 0.0006f;
 
-            public float m_MothScaler = 40;
+        //     public float m_MothScaler = 40;
 
-            public float GetVoicePeak()
-            {
-                int SeekPosition = m_AudioSource.timeSamples;
+        //     public float GetVoicePeak()
+        //     {
+        //         int SeekPosition = m_AudioSource.timeSamples;
 
-                int StartIndex = SeekPosition - 64;
-                if (StartIndex < 0)
-                {
-                    return 0;
-                }
+        //         int StartIndex = SeekPosition - 64;
+        //         if (StartIndex < 0)
+        //         {
+        //             return 0;
+        //         }
 
-                Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<float> floatData = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<float>(64);
-                m_AudioSource.clip.GetData(floatData, StartIndex);
+        //         Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<float> floatData = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<float>(64);
+        //         m_AudioSource.clip.GetData(floatData, StartIndex);
 
-                float Peak = 0;
-                for (int i = 0; i < 64; i++)
-                {
-                    float F = floatData[i];
-                    Peak += Mathf.Abs(F);
-                }
-                float Average = (float)Peak / 64;
-                return Average;
-            }
+        //         float Peak = 0;
+        //         for (int i = 0; i < 64; i++)
+        //         {
+        //             float F = floatData[i];
+        //             Peak += Mathf.Abs(F);
+        //         }
+        //         float Average = (float)Peak / 64;
+        //         return Average;
+        //     }
 
-            public void SetupMoth()
-            {
-                m_MouthBottom = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
-            }
+        //     public void SetupMoth()
+        //     {
+        //         m_MouthBottom = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+        //     }
 
-            void LateUpdate()
-            {
-                if (m_AudioSource && m_MouthBottom)
-                {
-                    float PeakVal = 0;
+        //     void LateUpdate()
+        //     {
+        //         if (m_AudioSource && m_MouthBottom)
+        //         {
+        //             float PeakVal = 0;
 
-                    if(m_AudioSource.isPlaying)
-                    {
-                        PeakVal = GetVoicePeak();
-                    }
-                    float InvertedVal = 1 - (PeakVal * m_MothScaler);
-                    Vector3 TargetPosition = new Vector3(m_MouthBottom.localPosition.x, Mathf.Lerp(m_MouthMinY, m_MouthMaxY, InvertedVal), m_MouthBottom.localPosition.z);
+        //             if(m_AudioSource.isPlaying)
+        //             {
+        //                 PeakVal = GetVoicePeak();
+        //             }
+        //             float InvertedVal = 1 - (PeakVal * m_MothScaler);
+        //             Vector3 TargetPosition = new Vector3(m_MouthBottom.localPosition.x, Mathf.Lerp(m_MouthMinY, m_MouthMaxY, InvertedVal), m_MouthBottom.localPosition.z);
 
-                    m_MouthBottom.localPosition = TargetPosition;
-                }
-            }
-        }
+        //             m_MouthBottom.localPosition = TargetPosition;
+        //         }
+        //     }
+        // }
 
         public class PropsEditorVisuzlier : MonoBehaviour
         {

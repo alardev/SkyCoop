@@ -6,7 +6,7 @@ using LiteNetLib.Utils;
 using SkyCoopClient;
 using SkyCoopServer;
 using UnityEngine;
-using static Il2Cppgw.gql.Interpreter;
+// using static Il2Cppgw.gql.Interpreter;
 using static Il2CppParadoxNotion.Services.Logger;
 using static SkyCoop.Comps.PlayerDamageColider;
 using static SkyCoop.PlayersManager;
@@ -507,70 +507,70 @@ namespace SkyCoop
             PropsManager.HandlePropRemove(PropGUID);
         }
 
-        public static void ClientJoinGame(NetDataReader Reader)
-        {
-            string GameGUID = Reader.GetString();
-            int PlayerID = Reader.GetInt();
-            int PokerID = Reader.GetInt();
+        // public static void ClientJoinGame(NetDataReader Reader)
+        // {
+        //     string GameGUID = Reader.GetString();
+        //     int PlayerID = Reader.GetInt();
+        //     int PokerID = Reader.GetInt();
 
-            PropsManager.HandleCardGameJoin(GameGUID, PlayerID, PokerID);
-        }
+        //     PropsManager.HandleCardGameJoin(GameGUID, PlayerID, PokerID);
+        // }
 
-        public static void ClientCardGameTurn(NetDataReader Reader)
-        {
-            string GameGUID = Reader.GetString();
-            int Turn = Reader.GetInt();
+        // public static void ClientCardGameTurn(NetDataReader Reader)
+        // {
+        //     string GameGUID = Reader.GetString();
+        //     int Turn = Reader.GetInt();
 
-            SkyCoop.Logger.Log($"ClientCardGameTurn GameGUID {GameGUID} Turn {Turn}");
+        //     SkyCoop.Logger.Log($"ClientCardGameTurn GameGUID {GameGUID} Turn {Turn}");
 
-            PropsManager.HandleCardGameTurn(GameGUID, Turn);
-        }
+        //     PropsManager.HandleCardGameTurn(GameGUID, Turn);
+        // }
 
-        public static void ClientCardGamePokerUpdate(NetDataReader Reader)
-        {
-            string GameGUID = Reader.GetString();
-            int UpdateType = Reader.GetInt();
+        // public static void ClientCardGamePokerUpdate(NetDataReader Reader)
+        // {
+        //     string GameGUID = Reader.GetString();
+        //     int UpdateType = Reader.GetInt();
 
-            if(UpdateType == 0)
-            {
-                int GamePlayerID = Reader.GetInt();
-                int Chips = Reader.GetInt();
+        //     if(UpdateType == 0)
+        //     {
+        //         int GamePlayerID = Reader.GetInt();
+        //         int Chips = Reader.GetInt();
 
-                PropsManager.HandleCardGameChips(GameGUID, GamePlayerID, Chips);
-            }else if(UpdateType == 1)
-            {
-                int GamePlayerID = Reader.GetInt();
-                int Bets = Reader.GetInt();
+        //         PropsManager.HandleCardGameChips(GameGUID, GamePlayerID, Chips);
+        //     }else if(UpdateType == 1)
+        //     {
+        //         int GamePlayerID = Reader.GetInt();
+        //         int Bets = Reader.GetInt();
 
-                PropsManager.HandleCardGameBet(GameGUID, GamePlayerID, Bets);
-            }
-            else if (UpdateType == 2)
-            {
-                int GamePlayerID = Reader.GetInt();
-                int CardID = Reader.GetInt();
-                int CardType = Reader.GetInt();
-                int CardSuit = Reader.GetInt();
+        //         PropsManager.HandleCardGameBet(GameGUID, GamePlayerID, Bets);
+        //     }
+        //     else if (UpdateType == 2)
+        //     {
+        //         int GamePlayerID = Reader.GetInt();
+        //         int CardID = Reader.GetInt();
+        //         int CardType = Reader.GetInt();
+        //         int CardSuit = Reader.GetInt();
 
-                PropsManager.HandleCardGameCard(GameGUID, GamePlayerID, CardID, CardType, CardSuit);
-            }
-            else if (UpdateType == 3)
-            {
-                int Dealer = Reader.GetInt();
+        //         PropsManager.HandleCardGameCard(GameGUID, GamePlayerID, CardID, CardType, CardSuit);
+        //     }
+        //     else if (UpdateType == 3)
+        //     {
+        //         int Dealer = Reader.GetInt();
 
-                PropsManager.HandleCardGameDealer(GameGUID, Dealer);
-            }
-        }
+        //         PropsManager.HandleCardGameDealer(GameGUID, Dealer);
+        //     }
+        // }
 
 
-        public static void ClientFishTalk(NetDataReader Reader)
-        {
-            int PlayerID = Reader.GetInt();
-            Comps.NetworkPlayer Player = PlayersManager.GetPlayer(PlayerID);
-            if (Player)
-            {
-                Player.DoFishTalk();
-            }
-        }
+        // public static void ClientFishTalk(NetDataReader Reader)
+        // {
+        //     int PlayerID = Reader.GetInt();
+        //     Comps.NetworkPlayer Player = PlayersManager.GetPlayer(PlayerID);
+        //     if (Player)
+        //     {
+        //         Player.DoFishTalk();
+        //     }
+        // }
 
         public static void ClientGetTier(NetDataReader Reader)
         {

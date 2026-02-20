@@ -48,24 +48,27 @@ namespace SkyCoop
 
         public static void BogusIt(GameObject Obj)
         {
+            if (Obj == null) return;
+
             foreach (Component Com in Obj.GetComponents<Component>())
             {
-                string ComName = Com.GetIl2CppType().Name;
-                if (ComName != Il2CppType.Of<BoxCollider>().Name
-                    && ComName != Il2CppType.Of<SphereCollider>().Name
-                    && ComName != Il2CppType.Of<CapsuleCollider>().Name
-                    && ComName != Il2CppType.Of<MeshCollider>().Name
-                    && ComName != Il2CppType.Of<PhysicMaterial>().Name
-                    && ComName != Il2CppType.Of<MeshFilter>().Name
-                    && ComName != Il2CppType.Of<LODGroup>().Name
-                    && ComName != Il2CppType.Of<Transform>().Name
-                    && ComName != Il2CppType.Of<Rigidbody>().Name
-                    && ComName != Il2CppType.Of<MeshRenderer>().Name
-                    && ComName != Il2CppType.Of<SkinnedMeshRenderer>().Name
-                    && ComName != Il2CppType.Of<AudioSource>().Name)
+                if (Com == null) continue;
+
+                // Use 'is' to catch the base types. 
+                // This avoids the PhysicMaterial ambiguity and string comparisons.
+                if (Com is Transform
+                    || Com is MeshFilter
+                    || Com is MeshRenderer
+                    || Com is SkinnedMeshRenderer
+                    || Com is LODGroup
+                    || Com is Rigidbody
+                    || Com is AudioSource
+                    || Com is Collider) // This automatically covers Box, Sphere, Capsule, and Mesh Colliders
                 {
-                    UnityEngine.Object.Destroy(Com);
+                    continue;
                 }
+
+                UnityEngine.Object.Destroy(Com);
             }
         }
 
@@ -88,21 +91,38 @@ namespace SkyCoop
                     foreach (Component Com in GearObject.GetComponents<Component>())
                     {
                         string ComName = Com.GetIl2CppType().Name;
-                        if (ComName != Il2CppType.Of<BoxCollider>().Name
-                            && ComName != Il2CppType.Of<SphereCollider>().Name
-                            && ComName != Il2CppType.Of<CapsuleCollider>().Name
-                            && ComName != Il2CppType.Of<MeshCollider>().Name
-                            && ComName != Il2CppType.Of<PhysicMaterial>().Name
-                            && ComName != Il2CppType.Of<MeshFilter>().Name
-                            && ComName != Il2CppType.Of<LODGroup>().Name
-                            && ComName != Il2CppType.Of<Transform>().Name
-                            && ComName != Il2CppType.Of<Rigidbody>().Name
-                            && ComName != Il2CppType.Of<MeshRenderer>().Name
-                            && ComName != Il2CppType.Of<SkinnedMeshRenderer>().Name
-                            && ComName != Il2CppType.Of<AudioSource>().Name)
+                        // if (ComName != Il2CppType.Of<BoxCollider>().Name
+                        //     && ComName != Il2CppType.Of<SphereCollider>().Name
+                        //     && ComName != Il2CppType.Of<CapsuleCollider>().Name
+                        //     && ComName != Il2CppType.Of<MeshCollider>().Name
+                        //     && ComName != Il2CppType.Of<PhysicMaterial>().Name
+                        //     && ComName != Il2CppType.Of<MeshFilter>().Name
+                        //     && ComName != Il2CppType.Of<LODGroup>().Name
+                        //     && ComName != Il2CppType.Of<Transform>().Name
+                        //     && ComName != Il2CppType.Of<Rigidbody>().Name
+                        //     && ComName != Il2CppType.Of<MeshRenderer>().Name
+                        //     && ComName != Il2CppType.Of<SkinnedMeshRenderer>().Name
+                        //     && ComName != Il2CppType.Of<AudioSource>().Name)
+                        // {
+                        //     UnityEngine.Object.Destroy(Com);
+                        // }
+                        if (Com == null) continue;
+
+                        // Use 'is' to catch the base types. 
+                        // This avoids the PhysicMaterial ambiguity and string comparisons.
+                        if (Com is Transform
+                            || Com is MeshFilter
+                            || Com is MeshRenderer
+                            || Com is SkinnedMeshRenderer
+                            || Com is LODGroup
+                            || Com is Rigidbody
+                            || Com is AudioSource
+                            || Com is Collider) // This automatically covers Box, Sphere, Capsule, and Mesh Colliders
                         {
-                            UnityEngine.Object.Destroy(Com);
+                            continue;
                         }
+
+                        UnityEngine.Object.Destroy(Com);
                     }
                     LocalizedName = LN;
                     return GearObject;
@@ -128,20 +148,23 @@ namespace SkyCoop
                     foreach (Component Com in GearObject.GetComponents<Component>())
                     {
                         string ComName = Com.GetIl2CppType().Name;
-                        if (ComName != Il2CppType.Of<BoxCollider>().Name
-                            && ComName != Il2CppType.Of<SphereCollider>().Name
-                            && ComName != Il2CppType.Of<CapsuleCollider>().Name
-                            && ComName != Il2CppType.Of<MeshCollider>().Name
-                            && ComName != Il2CppType.Of<PhysicMaterial>().Name
-                            && ComName != Il2CppType.Of<MeshFilter>().Name
-                            && ComName != Il2CppType.Of<LODGroup>().Name
-                            && ComName != Il2CppType.Of<Transform>().Name
-                            && ComName != Il2CppType.Of<Rigidbody>().Name
-                            && ComName != Il2CppType.Of<MeshRenderer>().Name
-                            && ComName != Il2CppType.Of<SkinnedMeshRenderer>().Name)
+                        if (Com == null) continue;
+
+                        // Use 'is' to catch the base types. 
+                        // This avoids the PhysicMaterial ambiguity and string comparisons.
+                        if (Com is Transform
+                            || Com is MeshFilter
+                            || Com is MeshRenderer
+                            || Com is SkinnedMeshRenderer
+                            || Com is LODGroup
+                            || Com is Rigidbody
+                            || Com is AudioSource
+                            || Com is Collider) // This automatically covers Box, Sphere, Capsule, and Mesh Colliders
                         {
-                            UnityEngine.Object.Destroy(Com);
+                            continue;
                         }
+
+                        UnityEngine.Object.Destroy(Com);
                     }
                     return GearObject;
                 } else
@@ -186,7 +209,7 @@ namespace SkyCoop
         }
         public static void DumpPrefabsList()
         {
-            foreach (var item in Resources.LoadAll(""))
+            foreach (var item in Resources.LoadAll<UnityEngine.Object>(""))
             {
                 Logger.Log(ConsoleColor.Magenta, "[Resources] " + item.name);
             }

@@ -83,17 +83,26 @@ namespace SkyCoop
         }
         public static string GetPlayerName(int Index)
         {
-            Comps.NetworkPlayer Player = s_Players[Index];
-            if (Player)
+            if (Index >= 0 && Index < s_Players.Count && s_Players[Index] != null)
             {
-                return Player.m_PlayerName;
+                return s_Players[Index].m_PlayerName;
             }
-            return "";
+            return "Survivor"; // Fallback so the UI doesn't crash
         }
         public static void SetPlayerName(int Index, string Name)
         {
+            // Check if Index is within the valid range of the collection
+            if (Index < 0 || Index >= s_Players.Count)
+            {
+                // Log it so you know the server and client are out of sync
+                Logger.Log(ConsoleColor.Yellow, $"[PlayersManager] Received name for ID {Index}, but s_Players only has {s_Players.Count} entries.");
+                return;
+            }
+
             Comps.NetworkPlayer Player = s_Players[Index];
-            if (Player)
+            
+            // Check if the player object at that index actually exists
+            if (Player != null)
             {
                 Player.m_PlayerName = Name;
                 Player.UpdateName();

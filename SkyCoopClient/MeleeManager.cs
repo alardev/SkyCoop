@@ -167,20 +167,20 @@ namespace SkyCoopClient
 
                 if (AssignExistingViewModel(ParnetObject.transform, "mesh_fishknife", "GEAR_FishKnife") == null)
                 {
-                    GameObject FishKnife = AssignBundleObjectViewModel(ParnetObject.transform, "TalkingFish", "GEAR_FishKnife", new Vector3(-0.03f, 0.05f, 0.01f), new Vector3(-180, 0, 90));
+                    // GameObject FishKnife = AssignBundleObjectViewModel(ParnetObject.transform, "TalkingFish", "GEAR_FishKnife", new Vector3(-0.03f, 0.05f, 0.01f), new Vector3(-180, 0, 90));
 
-                    if (FishKnife)
-                    {
-                        GearsSync.ApplyTextureDoner(FishKnife, "GEAR_FishKnife");
-                        FishKnife.name = "mesh_fishknife";
-                        FishKnife.SetActive(false);
-                        s_FishKnifeAnimator = FishKnife.transform.GetChild(0).GetComponent<Animator>();
-                        s_FishAudioSource = FishKnife.transform.GetComponent<AudioSource>();
-                        s_FishAudioSource.spatialBlend = 0;
-                        TalkingFish Talker = FishKnife.AddComponent<TalkingFish>();
-                        Talker.m_AudioSource = s_FishAudioSource;
-                        Talker.SetupMoth();
-                    }
+                    // if (FishKnife)
+                    // {
+                    //     GearsSync.ApplyTextureDoner(FishKnife, "GEAR_FishKnife");
+                    //     FishKnife.name = "mesh_fishknife";
+                    //     FishKnife.SetActive(false);
+                    //     s_FishKnifeAnimator = FishKnife.transform.GetChild(0).GetComponent<Animator>();
+                    //     s_FishAudioSource = FishKnife.transform.GetComponent<AudioSource>();
+                    //     s_FishAudioSource.spatialBlend = 0;
+                    //     TalkingFish Talker = FishKnife.AddComponent<TalkingFish>();
+                    //     Talker.m_AudioSource = s_FishAudioSource;
+                    //     Talker.SetupMoth();
+                    // }
                 }
 
                 FindDummy();
@@ -310,27 +310,27 @@ namespace SkyCoopClient
                         Comp.m_ImpactAudio = "Play_StoneImpacts";
                         Bullet.gameObject.AddComponent<Comps.MeleeBulletHandler>().m_GearName = MeleeName;
                     }
-                    if(MeleeName == "GEAR_FishKnife")
-                    {
-                        ClientSend.SendProjectile(Position, Rotation, "Fish");
-                        GameObject SoundObj = AssetManager.GetAssetFromBundle<GameObject>("3DFishHit");
-                        if (SoundObj)
-                        {
-                            if (ModMain.s_AppFocus)
-                            {
-                                GameObject SoundEmitter = UnityEngine.Object.Instantiate<GameObject>(SoundObj, Position, Rotation);
-                                if (SoundEmitter)
-                                {
-                                    SoundEmitter.GetComponent<AudioSource>().Play();
-                                    UnityEngine.Object.Destroy(SoundEmitter, 5);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
+                    // if(MeleeName == "GEAR_FishKnife")
+                    // {
+                    //     ClientSend.SendProjectile(Position, Rotation, "Fish");
+                    //     GameObject SoundObj = AssetManager.GetAssetFromBundle<GameObject>("3DFishHit");
+                    //     if (SoundObj)
+                    //     {
+                    //         if (ModMain.s_AppFocus)
+                    //         {
+                    //             GameObject SoundEmitter = UnityEngine.Object.Instantiate<GameObject>(SoundObj, Position, Rotation);
+                    //             if (SoundEmitter)
+                    //             {
+                    //                 SoundEmitter.GetComponent<AudioSource>().Play();
+                    //                 UnityEngine.Object.Destroy(SoundEmitter, 5);
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    // else
+                    // {
                         ClientSend.SendProjectile(Position, Rotation, "Melee");
-                    }
+                    // }
                 }
             }
             else
@@ -339,31 +339,31 @@ namespace SkyCoopClient
             }
         }
 
-        public static void OnFishStartTalking()
-        {
-            if(GameManager.m_PlayerManager && GameManager.m_PlayerManager.m_ItemInHands && GameManager.m_PlayerManager.m_ItemInHands.name == "GEAR_FishKnife")
-            {
-                if (s_FishKnifeAnimator && s_FishAudioSource)
-                {
-                    if(s_FishKnifeAnimator.GetAnimatorStateName(0, true) != "Talking")
+        // public static void OnFishStartTalking()
+        // {
+        //     if(GameManager.m_PlayerManager && GameManager.m_PlayerManager.m_ItemInHands && GameManager.m_PlayerManager.m_ItemInHands.name == "GEAR_FishKnife")
+        //     {
+        //         if (s_FishKnifeAnimator && s_FishAudioSource)
+        //         {
+        //             if(s_FishKnifeAnimator.GetAnimatorStateName(0, true) != "Talking")
                     
-                    s_FishAudioSource.Play();
-                    s_FishKnifeAnimator.SetTrigger("Talk");
-                    ClientSend.SendFishTalk();
-                }
-            }
-        }
+        //             s_FishAudioSource.Play();
+        //             s_FishKnifeAnimator.SetTrigger("Talk");
+        //             ClientSend.SendFishTalk();
+        //         }
+        //     }
+        // }
 
-        public static void FishTalkRollChane()
-        {
-            if (GameManager.m_PlayerManager && GameManager.m_PlayerManager.m_ItemInHands && GameManager.m_PlayerManager.m_ItemInHands.name == "GEAR_FishKnife")
-            {
-                if(UnityEngine.Random.Range(0, 100) < 5)
-                {
-                    OnFishStartTalking();
-                }
-            }
-        }
+        // public static void FishTalkRollChane()
+        // {
+        //     if (GameManager.m_PlayerManager && GameManager.m_PlayerManager.m_ItemInHands && GameManager.m_PlayerManager.m_ItemInHands.name == "GEAR_FishKnife")
+        //     {
+        //         if(UnityEngine.Random.Range(0, 100) < 5)
+        //         {
+        //             OnFishStartTalking();
+        //         }
+        //     }
+        // }
 
         public static void MeleeUnstove()
         {

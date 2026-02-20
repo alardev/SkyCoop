@@ -11,21 +11,34 @@ namespace SkyCoop
         public static string s_CurrenetMenuOverride = "Original";
         public static bool s_SkyCoopSettingsForced = false;
 
-        public static Comps.TexasHoldEmPlay s_RaisBetHook;
+        // public static Comps.TexasHoldEmPlay s_RaisBetHook;
 
         public static void AddButton(BasicMenu Menu, string Text, string Description, int order, Action Exec = null, bool Locked = false)
         {
-            BasicMenu.BasicMenuItemModel basicMenuItemModel = new BasicMenu.BasicMenuItemModel("", order, order, Localization.Get(Text), Localization.Get(Description), "", Exec, Color.gray, Color.white);
+            BasicMenu.BasicMenuItemModel basicMenuItemModel = new BasicMenu.BasicMenuItemModel(
+                "", 
+                order, 
+                order, 
+                Localization.Get(Text), 
+                Localization.Get(Description), 
+                "", 
+                Exec, 
+                Color.gray, 
+                Color.white
+            );
             basicMenuItemModel.m_IsLocked = Locked;
 
-            Menu.m_ItemModelList.Insert(order, basicMenuItemModel);
+            // FIX: Ensure the index is within the current bounds of the list
+            // Math.Min(order, Count) ensures we never go out of bounds.
+            int safeIndex = Math.Clamp(order, 0, Menu.m_ItemModelList.Count);
+            Menu.m_ItemModelList.Insert(safeIndex, basicMenuItemModel);
 
             foreach (IBasicMenuExtension basicMenuExtension in Menu.m_MenuExtensions)
             {
                 basicMenuExtension.ItemAdded(basicMenuItemModel);
             }
         }
-
+        
         public static void ShowMultiplayerSettings()
         {
             s_SkyCoopSettingsForced = true;
@@ -102,17 +115,11 @@ namespace SkyCoop
         }
 
         public static void OnHostPressed()
-        {
-            if (!Environment.GetCommandLineArgs().Contains("-JoeBiden"))
-            {
-                DoOKMessage("Stop it!", "No, you can't host yourself in this build.\nWait when we host.");
-                return;
-            }
-            
+        {            
             if (ModMain.Server.m_IsReady)
             {
                 RemovePleaseWait();
-                DoOKMessage("Server already up!", "You already hosting server!");
+                DoOKMessage("Server is already up!", "You already hosting server!");
             }
             else
             {
@@ -168,7 +175,7 @@ namespace SkyCoop
                     __instance.m_BasicMenu.Reset();
                     __instance.m_BasicMenu.UpdateTitle("", "", Vector3.zero);
 
-                    AddButton(__instance.m_BasicMenu, "GAMEPLAY_Host", "GAMEPLAY_HostDescription", 0, new Action(OnHostPressed), !Environment.GetCommandLineArgs().Contains("-JoeBiden"));
+                    AddButton(__instance.m_BasicMenu, "GAMEPLAY_Host", "GAMEPLAY_HostDescription", 0, new Action(OnHostPressed));
                     AddButton(__instance.m_BasicMenu, "GAMEPLAY_Join", "GAMEPLAY_JoinDescription", 1, new Action(OnJoinPressed));
                     AddButton(__instance.m_BasicMenu, "GAMEPLAY_Options", "GAMEPLAY_OptionsMultiplayerDescription", 2, new Action(OnSettingsPressed));
 
@@ -257,35 +264,35 @@ namespace SkyCoop
         {
             public static bool Prefix(Panel_PickUnits __instance)
             {
-                if (s_RaisBetHook != null)
-                {
-                    __instance.m_Label_NumUnits.text = __instance.m_numUnits.ToString() + "/" + __instance.m_maxUnits.ToString();
-                    __instance.m_GearIcon.mainTexture = Utils.GetInventoryIconTextureFromPrefabName("GEAR_CashBundle");
-                    __instance.m_Label_Description.text = "How much to bet?";
+                // if (s_RaisBetHook != null)
+                // {
+                //     __instance.m_Label_NumUnits.text = __instance.m_numUnits.ToString() + "/" + __instance.m_maxUnits.ToString();
+                //     __instance.m_GearIcon.mainTexture = Utils.GetInventoryIconTextureFromPrefabName("GEAR_CashBundle");
+                //     __instance.m_Label_Description.text = "How much to bet?";
 
-                    if(s_RaisBetHook.m_Player)
-                    {
-                        int CurrentBet = s_RaisBetHook.m_Player.m_Bet;
-                        int MaxBet = s_RaisBetHook.m_Player.m_Game.GetMaxBet();
-                        if (__instance.m_numUnits+ CurrentBet <= MaxBet)
-                        {
-                            int MinBet = (MaxBet+1)-(__instance.m_numUnits + CurrentBet);
-                            __instance.m_Label_Description.text +=  $"\n[FF0000]You need to bet at least {MinBet} more![-]";
-                        }
-                    }
+                //     if(s_RaisBetHook.m_Player)
+                //     {
+                //         int CurrentBet = s_RaisBetHook.m_Player.m_Bet;
+                //         int MaxBet = s_RaisBetHook.m_Player.m_Game.GetMaxBet();
+                //         if (__instance.m_numUnits+ CurrentBet <= MaxBet)
+                //         {
+                //             int MinBet = (MaxBet+1)-(__instance.m_numUnits + CurrentBet);
+                //             __instance.m_Label_Description.text +=  $"\n[FF0000]You need to bet at least {MinBet} more![-]";
+                //         }
+                //     }
 
-                    Utils.GetComponentInChildren<UILabel>(__instance.m_Execute_Button).text = Localization.Get("Bet");
-                    Utils.GetComponentInChildren<UILabel>(__instance.m_ExecuteAll_Button).text = Localization.Get("ALL-IN");
-                    __instance.m_ExecuteAction = PickUnitsExecuteAction.Drop;
-                    __instance.m_ButtonLegendContainer.BeginUpdate();
-                    __instance.m_ButtonLegendContainer.UpdateButton("Inventory_Examine", Utils.GetComponentInChildren<UILabel>(__instance.m_ExecuteAll_Button).text, true, 2, false);
-                    __instance.m_ButtonLegendContainer.UpdateButton("Inventory_Equip", Utils.GetComponentInChildren<UILabel>(__instance.m_Execute_Button).text, true, 1, false);
-                    __instance.m_ButtonLegendContainer.UpdateButton("Escape", "GAMEPLAY_ButtonBack", true, 0, true);
-                    __instance.m_ButtonLegendContainer.EndUpdate();
-                    __instance.m_ButtonIncrease.SetActive(__instance.m_numUnits < __instance.m_maxUnits);
-                    __instance.m_ButtonDecrease.SetActive(__instance.m_numUnits > 0);
-                    return false;
-                }
+                //     Utils.GetComponentInChildren<UILabel>(__instance.m_Execute_Button).text = Localization.Get("Bet");
+                //     Utils.GetComponentInChildren<UILabel>(__instance.m_ExecuteAll_Button).text = Localization.Get("ALL-IN");
+                //     __instance.m_ExecuteAction = PickUnitsExecuteAction.Drop;
+                //     __instance.m_ButtonLegendContainer.BeginUpdate();
+                //     __instance.m_ButtonLegendContainer.UpdateButton("Inventory_Examine", Utils.GetComponentInChildren<UILabel>(__instance.m_ExecuteAll_Button).text, true, 2, false);
+                //     __instance.m_ButtonLegendContainer.UpdateButton("Inventory_Equip", Utils.GetComponentInChildren<UILabel>(__instance.m_Execute_Button).text, true, 1, false);
+                //     __instance.m_ButtonLegendContainer.UpdateButton("Escape", "GAMEPLAY_ButtonBack", true, 0, true);
+                //     __instance.m_ButtonLegendContainer.EndUpdate();
+                //     __instance.m_ButtonIncrease.SetActive(__instance.m_numUnits < __instance.m_maxUnits);
+                //     __instance.m_ButtonDecrease.SetActive(__instance.m_numUnits > 0);
+                //     return false;
+                // }
 
                 return true;
             }
@@ -296,25 +303,25 @@ namespace SkyCoop
         {
             public static bool Prefix(Panel_PickUnits __instance)
             {
-                if (s_RaisBetHook != null)
-                {
-                    int CurrentBet = s_RaisBetHook.m_Player.m_Bet;
-                    int MaxBet = s_RaisBetHook.m_Player.m_Game.GetMaxBet();
-                    if (__instance.m_numUnits + CurrentBet <= MaxBet)
-                    {
-                        HUDMessage.AddMessage($"[FF0000]You need to bet at least {MaxBet+1}![-]", true, true);
-                        GameAudioManager.PlayGUIError();
-                    }
-                    else
-                    {
-                        s_RaisBetHook.SendActionRaise(__instance.m_numUnits);
-                    }
+                // if (s_RaisBetHook != null)
+                // {
+                //     int CurrentBet = s_RaisBetHook.m_Player.m_Bet;
+                //     int MaxBet = s_RaisBetHook.m_Player.m_Game.GetMaxBet();
+                //     if (__instance.m_numUnits + CurrentBet <= MaxBet)
+                //     {
+                //         HUDMessage.AddMessage($"[FF0000]You need to bet at least {MaxBet+1}![-]", true, true);
+                //         GameAudioManager.PlayGUIError();
+                //     }
+                //     else
+                //     {
+                //         s_RaisBetHook.SendActionRaise(__instance.m_numUnits);
+                //     }
 
                     
-                    s_RaisBetHook = null;
-                    __instance.ExitInterface();
-                    return false;
-                }
+                //     s_RaisBetHook = null;
+                //     __instance.ExitInterface();
+                //     return false;
+                // }
 
                 return true;
             }
@@ -325,13 +332,13 @@ namespace SkyCoop
         {
             public static bool Prefix(Panel_PickUnits __instance)
             {
-                if (s_RaisBetHook != null)
-                {
-                    s_RaisBetHook.SendActionAllIN();
-                    s_RaisBetHook = null;
-                    __instance.ExitInterface();
-                    return false;
-                }
+                // if (s_RaisBetHook != null)
+                // {
+                //     s_RaisBetHook.SendActionAllIN();
+                //     s_RaisBetHook = null;
+                //     __instance.ExitInterface();
+                //     return false;
+                // }
 
                 return true;
             }
@@ -342,7 +349,7 @@ namespace SkyCoop
         {
             public static bool Prefix(Panel_PickUnits __instance)
             {
-                s_RaisBetHook = null;
+                // s_RaisBetHook = null;
 
                 return true;
             }

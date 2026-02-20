@@ -510,49 +510,49 @@ namespace SkyCoopServer
             }
         }
 
-        public static void ClientCardGameAction(NetPeer Client, NetDataReader Reader, Server ServerInstance)
-        {
-            string GUID = Reader.GetString();
-            int State = Reader.GetInt();
-            int GamePlayerID = Reader.GetInt(); // NOT A CLINET ID!!!
+        // public static void ClientCardGameAction(NetPeer Client, NetDataReader Reader, Server ServerInstance)
+        // {
+        //     string GUID = Reader.GetString();
+        //     int State = Reader.GetInt();
+        //     int GamePlayerID = Reader.GetInt(); // NOT A CLINET ID!!!
 
-            if(State == 0)
-            {
-                CardGamesManager.TryJoinGame(Client, GUID, Client.Id, GamePlayerID, ServerInstance);
-            }else if(State == 1)
-            {
-                CardGamesManager.TryDoAction(GUID, GamePlayerID, "fold");
-            }
-            else if (State == 2)
-            {
-                CardGamesManager.TryDoAction(GUID, GamePlayerID, "check");
-            }
-            else if (State == 3)
-            {
-                CardGamesManager.TryDoAction(GUID, GamePlayerID, "call");
-            }
-            else if (State == 4)
-            {
-                int Raised = Reader.GetInt();
-                CardGamesManager.TryDoAction(GUID, GamePlayerID, "raise", Raised);
-            }
-        }
+        //     if(State == 0)
+        //     {
+        //         CardGamesManager.TryJoinGame(Client, GUID, Client.Id, GamePlayerID, ServerInstance);
+        //     }else if(State == 1)
+        //     {
+        //         CardGamesManager.TryDoAction(GUID, GamePlayerID, "fold");
+        //     }
+        //     else if (State == 2)
+        //     {
+        //         CardGamesManager.TryDoAction(GUID, GamePlayerID, "check");
+        //     }
+        //     else if (State == 3)
+        //     {
+        //         CardGamesManager.TryDoAction(GUID, GamePlayerID, "call");
+        //     }
+        //     else if (State == 4)
+        //     {
+        //         int Raised = Reader.GetInt();
+        //         CardGamesManager.TryDoAction(GUID, GamePlayerID, "raise", Raised);
+        //     }
+        // }
 
-        public static void ClientFishTalk(NetPeer Client, NetDataReader Reader, Server ServerInstance)
-        {
-            string Scene = ServerInstance.m_PlayersData.GetPlayer(Client.Id).m_Scene;
+        // public static void ClientFishTalk(NetPeer Client, NetDataReader Reader, Server ServerInstance)
+        // {
+        //     string Scene = ServerInstance.m_PlayersData.GetPlayer(Client.Id).m_Scene;
 
-            foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
-            {
-                if (ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == Scene)
-                {
-                    if(Peer.Id != Client.Id || ServerInstance.m_PlayersData.m_RecursiveDebug)
-                    {
-                        ServerSend.SendFishTalk(Peer, Client.Id);
-                    }
-                }
-            }
-        }
+        //     foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
+        //     {
+        //         if (ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == Scene)
+        //         {
+        //             if(Peer.Id != Client.Id || ServerInstance.m_PlayersData.m_RecursiveDebug)
+        //             {
+        //                 ServerSend.SendFishTalk(Peer, Client.Id);
+        //             }
+        //         }
+        //     }
+        // }
 
         public static void ClientGetTier(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {

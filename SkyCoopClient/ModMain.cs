@@ -150,7 +150,7 @@ namespace SkyCoop
 
             if (InputManager.GetReloadPressed(InputManager.m_CurrentContext))
             {
-                MeleeManager.OnFishStartTalking();
+                // MeleeManager.OnFishStartTalking();
             }
 
             if (IsGameplayScene() && !GameManager.s_IsGameplaySuspended)
@@ -222,9 +222,14 @@ namespace SkyCoop
             ExperienceModeManager EMM = GameManager.GetExperienceModeManagerComponent();
             GameModeConfig SelectedMode = null;
             RegionSpecification SelectedRegion = null;
-            foreach (GameModeConfig Mode in EMM.m_AvailableGameModes)
+            var modes = EMM.GetAvailableGameModes(); 
+
+            // In Il2Cpp interop, the count is almost always 'Count' 
+            // but it is explicitly defined on the implementation.
+            for (int i = 0; i < modes.Cast<Il2CppSystem.Collections.ICollection>().Count; i++)
             {
-                if(ExperienceMode == Mode.name)
+                var Mode = modes[i];
+                if (Mode != null && ExperienceMode == Mode.name)
                 {
                     SelectedMode = Mode;
                     break;
@@ -259,14 +264,14 @@ namespace SkyCoop
 
         public static string GetNickName()
         {
-            string UserName = Settings.m_Options.m_UserName;
+            bool Use_SteamUserName = Settings.m_Options.m_SteamUserName;
 
-            if (string.IsNullOrEmpty(UserName))
+            if (Use_SteamUserName)
             {
                 return SteamFriends.GetPersonaName();
             }
 
-            return UserName;
+            return "Player";
         }
 
         public static string GenerateSeededGUID(int gameSeed, Vector3 v3)

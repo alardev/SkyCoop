@@ -366,39 +366,39 @@ namespace SkyCoop
             SendToHost(writer);
         }
 
-        public static void SendCardGameAction(string GUID, int State, int GamePlayerID)
-        {
-            NetDataWriter writer = new NetDataWriter();
-            writer.Put((int)Packet.Type.ClientCardGameAction);
+        // public static void SendCardGameAction(string GUID, int State, int GamePlayerID)
+        // {
+        //     NetDataWriter writer = new NetDataWriter();
+        //     writer.Put((int)Packet.Type.ClientCardGameAction);
 
-            writer.Put(GUID);
-            writer.Put(State);
-            writer.Put(GamePlayerID);
+        //     writer.Put(GUID);
+        //     writer.Put(State);
+        //     writer.Put(GamePlayerID);
 
-            SkyCoop.Logger.Log($"SendCardGameAction {GUID} {State} {GamePlayerID}");
+        //     SkyCoop.Logger.Log($"SendCardGameAction {GUID} {State} {GamePlayerID}");
 
-            SendToHost(writer);
-        }
-        public static void SendCardGameAction(string GUID, int State, int GamePlayerID, int Amount)
-        {
-            NetDataWriter writer = new NetDataWriter();
-            writer.Put((int)Packet.Type.ClientCardGameAction);
+        //     SendToHost(writer);
+        // }
+        // public static void SendCardGameAction(string GUID, int State, int GamePlayerID, int Amount)
+        // {
+        //     NetDataWriter writer = new NetDataWriter();
+        //     writer.Put((int)Packet.Type.ClientCardGameAction);
 
-            writer.Put(GUID);
-            writer.Put(State);
-            writer.Put(GamePlayerID);
-            writer.Put(Amount);
+        //     writer.Put(GUID);
+        //     writer.Put(State);
+        //     writer.Put(GamePlayerID);
+        //     writer.Put(Amount);
 
-            SkyCoop.Logger.Log($"SendCardGameAction {GUID} {State} {GamePlayerID} {Amount}");
+        //     SkyCoop.Logger.Log($"SendCardGameAction {GUID} {State} {GamePlayerID} {Amount}");
 
-            SendToHost(writer);
-        }
-        public static void SendFishTalk()
-        {
-            NetDataWriter writer = new NetDataWriter();
-            writer.Put((int)Packet.Type.ClientFishTalk);
-            SendToHost(writer);
-        }
+        //     SendToHost(writer);
+        // }
+        // public static void SendFishTalk()
+        // {
+        //     NetDataWriter writer = new NetDataWriter();
+        //     writer.Put((int)Packet.Type.ClientFishTalk);
+        //     SendToHost(writer);
+        // }
 
         public static void SendTierRequest()
         {

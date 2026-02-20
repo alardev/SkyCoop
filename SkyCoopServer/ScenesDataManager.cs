@@ -397,32 +397,32 @@ namespace SkyCoopServer
 
         public void OnPropUsed(string SceneName, PropData PropData)
         {
-            if(PropData.prefabname == "CardGameTablePrefab")
-            {
-                PropData NewProp = new PropData();
-                NewProp.prefabname = "TexasHoldEmGamePrefab";
-                NewProp.frombundle = true;
+            // if(PropData.prefabname == "CardGameTablePrefab")
+            // {
+            //     PropData NewProp = new PropData();
+            //     NewProp.prefabname = "TexasHoldEmGamePrefab";
+            //     NewProp.frombundle = true;
 
-                NewProp.posx = PropData.posx;
-                NewProp.posy = PropData.posy;
-                NewProp.posz = PropData.posz;
+            //     NewProp.posx = PropData.posx;
+            //     NewProp.posy = PropData.posy;
+            //     NewProp.posz = PropData.posz;
 
-                NewProp.rotx = PropData.rotx;
-                NewProp.roty = PropData.roty;
-                NewProp.rotz = PropData.rotz;
+            //     NewProp.rotx = PropData.rotx;
+            //     NewProp.roty = PropData.roty;
+            //     NewProp.rotz = PropData.rotz;
 
-                NewProp.guid = Guid.NewGuid().ToString();
+            //     NewProp.guid = Guid.NewGuid().ToString();
 
-                CardGamesManager.StartNewGame(NewProp.guid, SceneName, m_ServerInstance);
+            //     CardGamesManager.StartNewGame(NewProp.guid, SceneName, m_ServerInstance);
 
-                foreach (NetPeer Peer in m_ServerInstance.m_Instance.ConnectedPeerList.ToArray())
-                {
-                    if (m_ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == SceneName)
-                    {
-                        ServerSend.SendPropCreated(Peer, NewProp);
-                    }
-                }
-            }
+            //     foreach (NetPeer Peer in m_ServerInstance.m_Instance.ConnectedPeerList.ToArray())
+            //     {
+            //         if (m_ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == SceneName)
+            //         {
+            //             ServerSend.SendPropCreated(Peer, NewProp);
+            //         }
+            //     }
+            // }
         }
 
         public void SendAllProps(string SceneName, NetPeer Client)

@@ -19,36 +19,36 @@ namespace SkyCoopClient
 
         [Section("Generic Settings")]
 
-        [Name("User Name")]
-        [Description("Nickname other players will see. Leave empty to use your name from Steam.")]
-        public string m_UserName = "";
+        [Name("Use Steam UserName")]
+        [Description("Enable Steam username visibility for other players. Disable to display a generic name.")]
+        public bool m_SteamUserName = true;
 
         [Section("Voice Chat")]
 
         [Name("Push To Talk")]
-        [Description("If enabled, your voice will be sent only when defined button is held.")]
+        [Description("Enable to hold down a defined key for voice activation.")]
         public bool m_PushToTalk = false;
 
         [Name("Push To Talk Button")]
-        [Description("Configure key, that will be used to send your voice when it's held.\n(only used if Push to talk is enabled!)")]
+        [Description("Configure the key for Push To Talk activation.")]
         public KeyCode m_VoiceButton = KeyCode.V;
 
         [Name("Received Volume")]
-        [Description("Volume of recived voice.")]
+        [Description("Volume of incoming voice.")]
         [Slider(0, 5)]
         public float m_ReceivedVoiceVolume = 1;
 
         [Name("Microphone Volume")]
-        [Description("Volume of your voice that going to be sent.")]
+        [Description("Volume of your outgoing voice.")]
         [Slider(0, 5)]
         public float m_MicrophoneVoice = 1;
 
         [Name("Use Noise Suppression")]
-        [Description("If enabled, your voice will be filtered from noise.")]
+        [Description("Enable to reduce microphone noise..")]
         public bool m_NoiseSuppression = true;
 
         [Name("Speaking Indicator")]
-        [Description("Show icon when you sending voice.")]
+        [Description("Show icon during speech.")]
         public bool m_DisplayMicrophoneIcon = true;
 
         public static void Init()
