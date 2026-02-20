@@ -21,7 +21,7 @@ Use the issues section to file for an bug or a request.
 Depends on the nature of the mod. If the mod is purely cosmetic or then I expect it won't cause any issues. Item mods, such as food additions etc, should be treated with more involvement as all players should have it installed in order to avoid desync issues and other bugs. If the mod alters any core game behaviours then more work needs to be done. This is an issue I will look into as it's something I'm personally interested as well.
 
 ### Will you support Linux/MacOS as well as cross-platform support?
-Yes. I myself use Linux (Bazzite + Arch) and am not aware of any technical limitations as for why this should be a problem. Current development is done on linux targeting windows builds on Proton/Wine. 
+Yes. I myself use Linux (Bazzite + Arch) and am not aware of any technical limitations as for why this should be a problem. Current development is done on linux targeting windows builds on Proton/Wine. I do plan to support native builds for Linux and maybe even MacOS as well once I get a clear understanding of the inner workings of all components. 
 
 ## Setting up the project
 ### Prerequisites for Linux/Proton:
