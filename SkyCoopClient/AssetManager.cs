@@ -3,12 +3,15 @@ using Il2CppInterop.Runtime;
 using Il2CppSystem.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using MelonLoader;
+using System.IO;
 
 namespace SkyCoop
 {
     internal class AssetManager
     {
-        public static string s_MainBundlePath = "Mods\\skycoop";
+        // The modern way to get the Mods folder on ML 0.7+
+        public static string s_MainBundlePath = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "skycoop");
         public static AssetBundle s_MainBundle = null;
         public static GameObject s_PistolBulletPrefab = null;
         public static GameObject s_RevolverBulletPrefab = null;
@@ -17,17 +20,25 @@ namespace SkyCoop
         {
             if(s_MainBundle == null)
             {
+                // Try to load the physical bundle file
                 s_MainBundle = AssetBundle.LoadFromFile(s_MainBundlePath);
+
                 if (s_MainBundle == null)
                 {
-                    Logger.Log(ConsoleColor.Red,"Have problems with loading main asset bundle!");
-                } else
+                    // Fallback check: try find it just as 'skycoop' without extension
+                    string fallback = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "skycoop");
+                    s_MainBundle = AssetBundle.LoadFromFile(fallback);
+                }
+
+                if (s_MainBundle == null)
+                {
+                    Logger.Log(ConsoleColor.Red, $"Failed to load the Main Asset bundle at: {s_MainBundlePath}");
+                }
+                else
                 {
                     Logger.Log(ConsoleColor.Blue, "Main Asset Bundle is loaded.");
                 }
             }
-            //DumpAddressablesContent();
-            //DumpPrefabsList();
         }
 
         public static T GetAssetFromGame<T>(string AssetName) where T : UnityEngine.Object
@@ -54,7 +65,7 @@ namespace SkyCoop
             {
                 if (Com == null) continue;
 
-                // Use 'is' to catch the base types. 
+                // Use 'is' to catch the base types.
                 // This avoids the PhysicMaterial ambiguity and string comparisons.
                 if (Com is Transform
                     || Com is MeshFilter
@@ -82,7 +93,7 @@ namespace SkyCoop
                 if (GearObject)
                 {
                     GearObject.name = GearName;
-                    
+
                     GearItem gi = GearObject.GetComponent<GearItem>();
                     if (gi)
                     {
@@ -108,7 +119,7 @@ namespace SkyCoop
                         // }
                         if (Com == null) continue;
 
-                        // Use 'is' to catch the base types. 
+                        // Use 'is' to catch the base types.
                         // This avoids the PhysicMaterial ambiguity and string comparisons.
                         if (Com is Transform
                             || Com is MeshFilter
@@ -150,7 +161,7 @@ namespace SkyCoop
                         string ComName = Com.GetIl2CppType().Name;
                         if (Com == null) continue;
 
-                        // Use 'is' to catch the base types. 
+                        // Use 'is' to catch the base types.
                         // This avoids the PhysicMaterial ambiguity and string comparisons.
                         if (Com is Transform
                             || Com is MeshFilter
