@@ -46,7 +46,4 @@
 	    <HintPath>..\dependencies\ModSettings.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="postbuild.cmd" />
-	</Target>
 </Project>
