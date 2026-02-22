@@ -69,7 +69,7 @@ namespace SkyCoop
         public override void OnLevelWasInitialized(int level)
         {
             MeleeManager.ReintilizeViewModels();
-            GameModeHUD.Reintilize();
+            // GameModeHUD.Reintilize();
             //AssetManager.DumpLocalizationKeysList();
         }
 

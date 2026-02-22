@@ -846,12 +846,12 @@ namespace SkyCoop
                 }
                 else
                 {
-                    HUDMessage.AddMessage("Failed, interaction blocked by other player!", true, true);
+                    HUDMessage.AddMessage("Failed, interaction is blocked by another player!", true, true);
                 }
             }
             else
             {
-                HUDMessage.AddMessage("Failed, interaction object no longer exist!", true, true);
+                HUDMessage.AddMessage("Failed, interaction object no longer exists!", true, true);
             }
         }
 
@@ -878,7 +878,7 @@ namespace SkyCoop
                         if (!Player.m_CameraAttention.enabled && Player.gameObject.activeSelf && Player.m_Action != Comps.NetworkPlayer.Actions.Death)
                         {
                             DeactivateAllSpectatingTargets();
-                            HUDMessage.AddMessage($"YOU SPECTATING {Player.m_PlayerName}");
+                            HUDMessage.AddMessage($"YOU ARE SPECTATING {Player.m_PlayerName}");
                             GameAudioManager.PlayGuiConfirm();
                             Player.m_CameraAttention.enabled = true;
                             return true;
@@ -896,7 +896,7 @@ namespace SkyCoop
                         if (!Player.m_CameraAttention.enabled && Player.gameObject.activeSelf && Player.m_Action != Comps.NetworkPlayer.Actions.Death)
                         {
                             DeactivateAllSpectatingTargets();
-                            HUDMessage.AddMessage($"YOU SPECTATING {Player.m_PlayerName}");
+                            HUDMessage.AddMessage($"YOU ARE SPECTATING {Player.m_PlayerName}");
                             GameAudioManager.PlayGuiConfirm();
                             Player.m_CameraAttention.enabled = true;
                             return true;
