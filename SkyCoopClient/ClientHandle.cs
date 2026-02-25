@@ -1,14 +1,9 @@
 ﻿using Il2Cpp;
-using Il2CppRewired;
-using Il2CppTLD.PDID;
 using Il2CppTMPro;
 using LiteNetLib.Utils;
 using SkyCoopClient;
 using SkyCoopServer;
 using UnityEngine;
-// using static Il2Cppgw.gql.Interpreter;
-using static Il2CppParadoxNotion.Services.Logger;
-using static SkyCoop.Comps.PlayerDamageColider;
 using static SkyCoop.PlayersManager;
 
 namespace SkyCoop
@@ -63,14 +58,14 @@ namespace SkyCoop
             {
                 Task.Run(() => { ModMain.Client.ConnectToServerVoice(CFG.m_VoicePort); });
             }
-            //GameObject SoundPlayerPrefab = AssetManager.GetAssetFromBundle<GameObject>("JoinServer");
-            //if (SoundPlayerPrefab)
-            //{
-            //    GameObject SoundPlayer = GameObject.Instantiate(SoundPlayerPrefab);
-            //    SoundPlayer.GetComponent<AudioSource>().Play();
-            //    SceneManager.DontDestroyOnLoad(SoundPlayer);
-            //    UnityEngine.Object.Destroy(SoundPlayer, 15);
-            //}
+            GameObject SoundPlayerPrefab = AssetManager.GetAssetFromBundle<GameObject>("JoinServer");
+            if (SoundPlayerPrefab)
+            {
+               GameObject SoundPlayer = GameObject.Instantiate(SoundPlayerPrefab);
+               SoundPlayer.GetComponent<AudioSource>().Play();
+               SceneManager.DontDestroyOnLoad(SoundPlayer);
+               UnityEngine.Object.Destroy(SoundPlayer, 15);
+            }
         }
 
         public static void ServerConfigUpdated(NetDataReader Reader)
@@ -283,7 +278,7 @@ namespace SkyCoop
             }
             else
             {
-                SkyCoop.Logger.Log(ConsoleColor.Red, "ClientPickUpGear, gear no longer exist.");
+                SkyCoop.Logger.Log(ConsoleColor.Red, "ClientPickUpGear, gear no longer exists.");
                 GearsSync.PickUpFailed();
             }
         }
@@ -335,15 +330,15 @@ namespace SkyCoop
             string Afix = Reader.GetString();
 
             GameModeHUD.SetSideIcon(SideBarIndex, Icon);
-            GameModeHUD.SetSideLablePrefix(SideBarIndex, Prefix);
-            GameModeHUD.SetSideLable(SideBarIndex, $" {Afix}");
+            GameModeHUD.SetSideLabelPrefix(SideBarIndex, Prefix);
+            GameModeHUD.SetSideLabel(SideBarIndex, $" {Afix}");
         }
 
         public static void ClientHUDSideBarUpdate(NetDataReader Reader)
         {
             int SideBarIndex = Reader.GetInt();
             string Afix = Reader.GetString();
-            GameModeHUD.SetSideLable(SideBarIndex, $" {Afix}");
+            GameModeHUD.SetSideLabel(SideBarIndex, $" {Afix}");
         }
 
         public static void ClientFreeze(NetDataReader Reader)
