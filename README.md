@@ -62,7 +62,7 @@ Current working setup (Not production ready yet) is as following:
 1. Install Unity Hub and Unity Editor version `6000.0.60f1`.
 2. Install Windows Build Support (mono).
 3. Open project SkyCoopBundles.
-4. Go to Window > AssetBundle Browser. In the ASsetBundle window, go to the Build tab. Click on Build. The default output path is `AssetBundles/StandaloneWindows`. You can find it in your SkyCoopBundles project folder. Copy the `skycoop` binary file from it and paste it into your `Mods` folder.
+4. Go to Window > AssetBundle Browser. In the AssetBundle window, go to the Build tab. Click on Build. The default output path is `AssetBundles/StandaloneWindows`. You can find it in your SkyCoopBundles project folder. Copy the `skycoop` binary file from it and paste it into your `Mods` folder.
 5. Go to `SkyCoopBundles/Assets/_ModComponent` and zip the `SkyCoop` folder inside. Rename the `SkyCoop.zip` into `SkyCoop.modcomponent` and move it into your `Mods` folder.
 
 You're now ready to launch __Sky Co-Op__! If you encounter any issues, check the MelonLoader logs at `MelonLoader/latest.log`.
