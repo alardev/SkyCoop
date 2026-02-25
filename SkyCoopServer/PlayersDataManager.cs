@@ -642,32 +642,32 @@ namespace SkyCoopServer
             int CurrentAttempt = 1;
             List<string> PossibleNames = new List<string>()
             {
-                "Alpha",
-                "Bravo",
-                "Charlie",
-                "Delta",
+                "Aurora",
+                "Bear",
+                "Coast",
+                "Deer",
                 "Echo",
-                "Foxtrot",
-                "Golf",
-                "Hotel",
-                "India",
-                "Juliet",
-                "Kilo",
-                "Lima",
-                "Mike",
-                "November",
-                "Oscar",
-                "Papa",
-                "Quebec",
-                "Romeo",
-                "Sierra",
-                "Tango",
-                "Uniform",
-                "Victor",
-                "Whiskey",
+                "Flare",
+                "Goose",
+                "Hunter",
+                "Ice",
+                "Jagged",
+                "Kettle",
+                "Lumber",
+                "Moose",
+                "North",
+                "Oldman",
+                "Pouch",
+                "Quonset",
+                "Ridge",
+                "Summit",
+                "Tinder",
+                "Ursa",
+                "Valley",
+                "Wolf",
                 "X-ray",
-                "Yankee",
-                "Zulu",
+                "Yukon",
+                "Zero",
             };
             System.Random RNG = new System.Random(Guid.NewGuid().GetHashCode());
             while (CurrentAttempt <= MaxAttempts)
@@ -698,7 +698,7 @@ namespace SkyCoopServer
 
                 return NewSquad;
             }
-            Logger.Log(ConsoleColor.Yellow, $"[Squads] Failed to created a Squad. Too many squads!");
+            Logger.Log(ConsoleColor.Yellow, $"[Squads] Failed to create a Squad. Too many squads!");
             return null;
         }
 
