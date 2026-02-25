@@ -58,7 +58,23 @@ The default location for these libraries is in the `~/.nuget/packages/` director
 
 ### Building the AssetBundles and the .modcomponent
 
-WIP: Coming Soon
+Current working setup (Not production ready yet) is as following:
+1. Install Unity Hub and Unity Editor version `6000.0.60f1`.
+2. Install Windows Build Support (mono).
+3. Open project SkyCoopBundles.
+4. Go to Window > AssetBundle Browser. In the ASsetBundle window, go to the Build tab. Click on Build. The default output path is `AssetBundles/StandaloneWindows`. You can find it in your SkyCoopBundles project folder. Copy the `skycoop` binary file from it and paste it into your `Mods` folder.
+5. Go to `SkyCoopBundles/Assets/_ModComponent` and zip the `SkyCoop` folder inside. Rename the `SkyCoop.zip` into `SkyCoop.modcomponent` and move it into your `Mods` folder.
+
+You're now ready to launch __Sky Co-Op__! If you encounter any issues, check the MelonLoader logs at `MelonLoader/latest.log`.
+
+# Credits and Special Gratitude
+- [Filigrani](https://github.com/Filigrani) and [RED1cat](https://github.com/RED1cat) for their groundwork on TLD multiplayer - [SkyCoop](https://github.com/Filigrani/SkyCoop/tree/Reborn).
+- [Zorgesho](https://github.com/zorgesho/) for [SkipIntro mod](https://github.com/zorgesho/TheLongDarkMods/tree/master/SkipIntro).
+- [Lava Gang](https://github.com/LavaGang) for creating [Melon Loader](https://github.com/LavaGang/MelonLoader).
+- Creators and contributors of [Harmony](https://github.com/pardeike/Harmony).
+- [Hinterland Studio Inc](https://hinterlandgames.com/) for creating an awesome game.
+- Authors of WebRtcVadSharp, Mono.Nat, LiteNetLib, OpenVoiceSharp and other FOSS libraries.
+- Others who I forgot to include.
 
 # Disclaimer
 The mod developers of **Sky Co-Op** are not affiliated in any way with [The Long Dark](https://store.steampowered.com/app/305620). [The Long Dark](https://store.steampowered.com/app/305620) is a product of [Hinterland Studio Inc](https://hinterlandgames.com/).
