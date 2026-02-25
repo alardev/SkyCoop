@@ -189,11 +189,11 @@ namespace SkyCoopClient
 
         public static void AddJoinMessage(int PlayerID)
         {
-            AddTextMessage($"{GetPlayerName(PlayerID)} join");
+            AddTextMessage($"{GetPlayerName(PlayerID)} connected");
         }
         public static void AddLeaveMessage(int PlayerID)
         {
-            AddTextMessage($"{GetPlayerName(PlayerID)} leave");
+            AddTextMessage($"{GetPlayerName(PlayerID)} left");
         }
 
         public static void AddKillFeedMessage(DataStr.KillFeedMessage Message)
