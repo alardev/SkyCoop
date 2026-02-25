@@ -546,7 +546,7 @@ namespace SkyCoopClient
 
         public static void HandleGearPickUp(string GearName, string JSON)
         {
-            CanclePickingUp();
+            CancelPickingUp();
             //SkyCoop.Logger.Log(ConsoleColor.Green, $"HandleGearPickUp {GearName}");
             GameObject reference = AssetManager.GetAssetFromGame<GameObject>(GearName);
             if (reference)
@@ -573,7 +573,7 @@ namespace SkyCoopClient
             }
         }
 
-        public static void CanclePickingUp()
+        public static void CancelPickingUp()
         {
             GameManager.GetPlayerManagerComponent().SetControlMode(s_ControlModeBeforePickingUp);
             Panel_HUD Panel;
@@ -586,14 +586,14 @@ namespace SkyCoopClient
         public static void PickUpFailed()
         {
             GameAudioManager.PlayGUIError();
-            HUDMessage.AddMessage("Failed, gear no longer exist!", true, true);
-            CanclePickingUp();
+            HUDMessage.AddMessage("Failed, gear no longer exists!", true, true);
+            CancelPickingUp();
         }
 
         public static void PickUpFailedSilent()
         {
             GameAudioManager.PlayGUIError();
-            CanclePickingUp();
+            CancelPickingUp();
         }
 
         public static void TryPickUp(string GUID, bool PlaceMode = false)
