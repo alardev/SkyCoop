@@ -144,10 +144,10 @@ namespace SkyCoop
                         switch (message.Reason)
                         {
                             case DisconnectReason.ConnectionFailed:
-                                Message = "Wasn't able to connect to the server.";
+                                Message = "Failed to connect to the server.";
                                 break;
                             case DisconnectReason.Timeout:
-                                Message = "Disconnected doe timeout.";
+                                Message = "Disconnected due to timeout.";
                                 break;
                             case DisconnectReason.HostUnreachable:
                                 Message = "Server is unreachable.";
