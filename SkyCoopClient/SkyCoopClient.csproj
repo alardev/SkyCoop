@@ -17,6 +17,8 @@
 		<!--This tells the compiler to use assembly attributes instead of generating its own.-->
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
+		<NuGetPkgRoot Condition="'$(NuGetPkgRoot)' == ''">$(Home)/.nuget/packages/</NuGetPkgRoot>
+
 		<!--PDB files give line numbers in stack traces (errors). This is useful for debugging. There are 3 options:-->
 		<!--full has a pdb file created beside the dll.-->
 		<!--embedded has the pdb data embedded within the dll. This is useful because bug reports will then have line numbers.-->
@@ -31,7 +33,7 @@
 	<!--This is the of packages that the mod references.-->
 	<ItemGroup>
 		<!--This package contains almost everything a person could possibly need to reference while modding.-->
-		<PackageReference Include="LiteNetLib" Version="1.3.1" />
+		<PackageReference Include="LiteNetLib" Version="1.3.5" />
 		<PackageReference Include="OpenVoiceSharp" Version="1.0.3" />
 		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.51.0" />
 		<PackageReference Include="WebRtcVadSharp" Version="1.3.2" />

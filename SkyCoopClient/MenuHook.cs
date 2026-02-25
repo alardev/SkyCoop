@@ -87,7 +87,7 @@ namespace SkyCoop
                 {
                     GameObject Clone = UnityEngine.Object.Instantiate(VictimForClone.gameObject, VictimForClone.parent);
                     Clone.name = "SkyCoopRebornTitle_Texture";
-                    Clone.GetComponent<UITexture>().mainTexture = AssetManager.GetAssetFromGame<Texture2D>("Titles_SkyCoopReborn_Texture");
+                    Clone.GetComponent<UITexture>().mainTexture = AssetManager.GetAssetFromBundle<Texture2D>("Titles_SkyCoopReborn_Texture");
                     Clone.SetActive(s_CurrenetMenuOverride == "Multiplayer");
                 }
             }
@@ -102,7 +102,7 @@ namespace SkyCoop
             UpdateSandboxMainWindow(InterfaceManager.GetPanel<Panel_Sandbox>().m_MainWindow);
         }
 
-        public static void OnMuliplayerBackPressed()
+        public static void OnMultiplayerBackPressed()
         {
             SetMenuOverrideMode("Original");
             InterfaceManager.TrySetPanelEnabled<Panel_MainMenu>(true);
@@ -179,7 +179,7 @@ namespace SkyCoop
                     AddButton(__instance.m_BasicMenu, "GAMEPLAY_Join", "GAMEPLAY_JoinDescription", 1, new Action(OnJoinPressed));
                     AddButton(__instance.m_BasicMenu, "GAMEPLAY_Options", "GAMEPLAY_OptionsMultiplayerDescription", 2, new Action(OnSettingsPressed));
 
-                    __instance.m_BasicMenu.SetBackAction(new Action(OnMuliplayerBackPressed));
+                    __instance.m_BasicMenu.SetBackAction(new Action(OnMultiplayerBackPressed));
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace SkyCoop
         {
             public static void Postfix(Panel_OptionsMenu __instance)
             {
-                AddButton(__instance.m_BasicMenu, "GAMEPLAY_SkyCoopSettings", "GAMEPLAY_SkyCoopSettingsDescription", 7, new Action(ShowMultiplayerSettings));
+                AddButton(__instance.m_BasicMenu, "GAMEPLAY_SkyCoopSettings", "GAMEPLAY_SkyCoopSettingsDescription", 6, new Action(ShowMultiplayerSettings));
             }
         }
 

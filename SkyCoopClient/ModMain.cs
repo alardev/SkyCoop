@@ -38,8 +38,9 @@ namespace SkyCoop
             }
             GameManager.m_IsPaused = false;
         }
+
         [HarmonyLib.HarmonyPatch(typeof(InputManager), "PauseGame")]
-        public static class InputManager_DuckYOuPause
+        public static class InputManager_DisablePause
         {
             public static void Postfix()
             {
@@ -62,25 +63,26 @@ namespace SkyCoop
             Comps.RegisterComponents();
             AssetManager.PreloadMainBundle();
             AssetManager.RegisterIlegalGearsCommand();
+            // AssetManager.DumpAddressablesContent();
             WeaponsManager.InitDescriptors();
         }
 
         [Obsolete]
         public override void OnLevelWasInitialized(int level)
         {
-            MeleeManager.ReintilizeViewModels();
-            // GameModeHUD.Reintilize();
+            MeleeManager.ReinitializeViewModels();
+            GameModeHUD.Reinitialize();
             //AssetManager.DumpLocalizationKeysList();
         }
 
         public static void OnGameBoot()
         {
             ReimplementConsole();
-            //AssetManager.DumpAddressablesContent();
-            if (!MaterialsContainer.s_Intilized)
+            // AssetManager.DumpAddressablesContent();
+            if (!MaterialsContainer.s_Initialized)
             {
                 MaterialsContainer.PreloadMaterials();
-                MaterialsContainer.s_Intilized = true;
+                MaterialsContainer.s_Initialized = true;
             }
         }
 

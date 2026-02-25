@@ -1464,8 +1464,8 @@ namespace SkyCoop
         //     public int m_Bet = 0;
         //     public int m_Chips = 0;
 
-        //     public TextMeshPro m_ChipsLable;
-        //     public TextMeshPro m_BetLable;
+        //     public TextMeshPro m_ChipsLabel;
+        //     public TextMeshPro m_BetLabel;
         //     public TextMeshPro m_RaisAmount;
 
         //     public List<GameObject> m_Cards = new List<GameObject>();
@@ -1499,19 +1499,19 @@ namespace SkyCoop
         //         m_Cards.Add(transform.GetChild(1).gameObject);
         //         transform.GetChild(1).gameObject.SetActive(false);
 
-        //         m_BetLable = transform.GetChild(2).GetComponent<TextMeshPro>();
-        //         m_ChipsLable = transform.GetChild(3).GetComponent<TextMeshPro>();
+        //         m_BetLabel = transform.GetChild(2).GetComponent<TextMeshPro>();
+        //         m_ChipsLabel = transform.GetChild(3).GetComponent<TextMeshPro>();
         //     }
 
         //     void Update()
         //     {
-        //         if (m_BetLable)
+        //         if (m_BetLabel)
         //         {
-        //             m_BetLable.SetText($"{m_Bet}$");
+        //             m_BetLabel.SetText($"{m_Bet}$");
         //         }
-        //         if (m_ChipsLable)
+        //         if (m_ChipsLabel)
         //         {
-        //             m_ChipsLable.SetText($"{m_Chips}$");
+        //             m_ChipsLabel.SetText($"{m_Chips}$");
         //         }
         //     }
 
@@ -1530,7 +1530,7 @@ namespace SkyCoop
         //             NewMatsArr[i] = Mesh.materials[i];
         //             if(i == 0)
         //             {
-        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
+        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetAsync<Texture>($"{CardType}_{CardSuit}");
         //             }
         //         }
         //         Mesh.SetMaterialArray(NewMatsArr);
@@ -1691,7 +1691,7 @@ namespace SkyCoop
         //             NewMatsArr[i] = Mesh.materials[i];
         //             if (i == 0)
         //             {
-        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetFromBundle<Texture>($"{CardType}_{CardSuit}");
+        //                 NewMatsArr[0].mainTexture = AssetManager.GetAssetAsync<Texture>($"{CardType}_{CardSuit}");
         //             }
         //         }
         //         Mesh.SetMaterialArray(NewMatsArr);
@@ -1928,7 +1928,7 @@ namespace SkyCoop
 
             public int m_IndexHandler = 0;
             public float m_Health = 100;
-            public UILabel m_NameLable = null;
+            public UILabel m_NameLabel = null;
             public GameObject m_BuffObj;
             public GameObject m_DebuffObj;
             public UISprite m_DebuffSprite;
@@ -1965,16 +1965,16 @@ namespace SkyCoop
                 {
                     SquadHUD.SquadMember Member = SquadHUD.GetMember(m_IndexHandler);
                     s_Bar.m_SpawnedObject.SetActive(Member != null);
-                    if (m_NameLable)
+                    if (m_NameLabel)
                     {
-                        m_NameLable.gameObject.SetActive(Member != null);
+                        m_NameLabel.gameObject.SetActive(Member != null);
                     }
                     if (Member != null)
                     {
                         m_Health = Member.m_Health;
-                        if (m_NameLable)
+                        if (m_NameLabel)
                         {
-                            m_NameLable.text = CanvasUI.GetPlayerName(Member.m_ID);
+                            m_NameLabel.text = CanvasUI.GetPlayerName(Member.m_ID);
                         }
                         if (m_DebuffObj)
                         {
@@ -2042,27 +2042,27 @@ namespace SkyCoop
                             
                             if (HUD && HUD.m_NowhereToHide)
                             {
-                                GameObject LableClone = UnityEngine.Object.Instantiate<GameObject>(HUD.m_NowhereToHide.m_WardGlyphRoot.transform.GetChild(1).gameObject, Clone.transform);
-                                if (LableClone)
+                                GameObject LabelClone = UnityEngine.Object.Instantiate<GameObject>(HUD.m_NowhereToHide.m_WardGlyphRoot.transform.GetChild(1).gameObject, Clone.transform);
+                                if (LabelClone)
                                 {
-                                    LableClone.name = "PlayerName";
-                                    UILabel Lable = LableClone.GetComponent<UILabel>();
-                                    if (Lable)
+                                    LabelClone.name = "PlayerName";
+                                    UILabel Label = LabelClone.GetComponent<UILabel>();
+                                    if (Label)
                                     {
-                                        Lable.text = $"Teammate {i}";
+                                        Label.text = $"Teammate {i}";
                                     }
-                                    Bar.m_NameLable = Lable;
-                                    UILocalize Loca = Lable.GetComponent<UILocalize>();
+                                    Bar.m_NameLabel = Label;
+                                    UILocalize Loca = Label.GetComponent<UILocalize>();
                                     if (Loca)
                                     {
                                         UnityEngine.Object.Destroy(Loca);
                                     }
-                                    UIAnchor Anch = Lable.GetComponent<UIAnchor>();
+                                    UIAnchor Anch = Label.GetComponent<UIAnchor>();
                                     if (Loca)
                                     {
                                         UnityEngine.Object.Destroy(Anch);
                                     }
-                                    LableClone.transform.localPosition = new Vector3(-15f, NamesSpacing, 0);
+                                    LabelClone.transform.localPosition = new Vector3(-15f, NamesSpacing, 0);
                                 }
                             }
 

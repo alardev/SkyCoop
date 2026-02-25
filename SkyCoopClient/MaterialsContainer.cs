@@ -12,7 +12,7 @@ namespace SkyCoopClient
     {
         public static Dictionary<string, Material> s_Materials = new Dictionary<string, Material>();
         public static DecorationItemVerificationList s_Decos;
-        public static bool s_Intilized = false;
+        public static bool s_Initialized = false;
 
         public static Material GetMaterial(string MaterialName)
         {

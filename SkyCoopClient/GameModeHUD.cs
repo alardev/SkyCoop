@@ -15,18 +15,18 @@ namespace SkyCoopClient
         static HUDNowhereToHide s_HUD;
 
         public static List<UISprite> s_SideIcons = new List<UISprite>();
-        public static List<UILabel> s_SideLables = new List<UILabel>();
-        public static List<string> s_SideLablesPrefix = new List<string>() { "", "", "", "" };
+        public static List<UILabel> s_SideLabels = new List<UILabel>();
+        public static List<string> s_SideLabelsPrefix = new List<string>() { "", "", "", "" };
         public static string s_TimerPrefix = "Time Remaining";
-        public static UILabel s_BottomLable = null;
+        public static UILabel s_BottomLabel = null;
 
-        public static void Reintilize()
+        public static void Reinitialize()
         {
             if (s_DarkwalkerHUDClone == null)
             {
                 s_SideIcons.Clear();
-                s_SideLables.Clear();
-                s_SideLablesPrefix = new List<string>() { "", "", "", "" };
+                s_SideLabels.Clear();
+                s_SideLabelsPrefix = new List<string>() { "", "", "", "" };
                 Panel_HUD Panel = null;
                 if (InterfaceManager.TryGetPanel<Panel_HUD>(out Panel))
                 {
@@ -42,17 +42,17 @@ namespace SkyCoopClient
                     s_HUD.transform.GetChild(4).gameObject.SetActive(false);
                     s_HUD.m_ToxicFogIndicatorLabel.gameObject.SetActive(false);
                     s_HUD.m_ToxicFogIndicatorLabel.text = "";
-                    s_BottomLable = s_HUD.m_ToxicFogIndicatorLabel;
+                    s_BottomLabel = s_HUD.m_ToxicFogIndicatorLabel;
 
 
                     s_SideIcons.Add(FixSideIcon(s_HUD.m_WardGlyphRoot.transform));
                     s_SideIcons.Add(FixSideIcon(s_HUD.m_LureGlyphRoot.transform));
                     s_SideIcons.Add(FixSideIcon(s_HUD.transform.GetChild(4)));
 
-                    s_SideLables.Add(GetSideLable(s_HUD.m_WardGlyphRoot.transform));
-                    s_SideLables.Add(GetSideLable(s_HUD.m_LureGlyphRoot.transform));
-                    s_SideLables.Add(GetSideLable(s_HUD.transform.GetChild(4)));
-                    s_SideLables.Add(s_BottomLable);
+                    s_SideLabels.Add(GetSideLabel(s_HUD.m_WardGlyphRoot.transform));
+                    s_SideLabels.Add(GetSideLabel(s_HUD.m_LureGlyphRoot.transform));
+                    s_SideLabels.Add(GetSideLabel(s_HUD.transform.GetChild(4)));
+                    s_SideLabels.Add(s_BottomLabel);
 
                 }
             }
@@ -93,36 +93,36 @@ namespace SkyCoopClient
             s_SideIcons[SideIconIndex].spriteName = Icon;
         }
 
-        public static UILabel GetSideLable(Transform Root)
+        public static UILabel GetSideLabel(Transform Root)
         {
-            UILabel Lable = Root.GetChild(1).GetComponent<UILabel>();
-            UILocalize Loca = Lable.GetComponent<UILocalize>();
+            UILabel Label = Root.GetChild(1).GetComponent<UILabel>();
+            UILocalize Loca = Label.GetComponent<UILocalize>();
             if (Loca)
             {
                 UnityEngine.Object.Destroy(Loca);
             }
 
-            return Lable;
+            return Label;
         }
 
-        public static void SetSideLable(int SideLableIndex, string Text)
+        public static void SetSideLabel(int SideLabelIndex, string Text)
         {
-            if (SideLableIndex < 0 || SideLableIndex > s_SideLables.Count - 1)
+            if (SideLabelIndex < 0 || SideLabelIndex > s_SideLabels.Count - 1)
             {
                 return;
             }
-            s_SideLables[SideLableIndex].gameObject.SetActive(true);
-            s_SideLables[SideLableIndex].text = s_SideLablesPrefix[SideLableIndex]+Text;
+            s_SideLabels[SideLabelIndex].gameObject.SetActive(true);
+            s_SideLabels[SideLabelIndex].text = s_SideLabelsPrefix[SideLabelIndex]+Text;
         }
-        public static void SetSideLablePrefix(int SideLableIndex, string Text)
+        public static void SetSideLabelPrefix(int SideLabelIndex, string Text)
         {
-            s_SideLablesPrefix[SideLableIndex] = Text;
+            s_SideLabelsPrefix[SideLabelIndex] = Text;
         }
 
-        public static void SetBottomLable(string Text)
+        public static void SetBottomLabel(string Text)
         {
-            s_BottomLable.gameObject.SetActive(true);
-            s_BottomLable.text = Text;
+            s_BottomLabel.gameObject.SetActive(true);
+            s_BottomLabel.text = Text;
         }
 
         public static void SetTimerPrefix(string Text)
@@ -136,30 +136,30 @@ namespace SkyCoopClient
                 int Minutes = (int)TimeLeft / 60;
                 int Seconds = (int)TimeLeft % 60;
                 s_HUD.m_StartCountdownRoot.SetActive(true);
-                UILabel Lable = s_HUD.m_StartCountdownRoot.transform.GetChild(0).GetComponent<UILabel>();
-                UILocalize Loca = Lable.GetComponent<UILocalize>();
+                UILabel Label = s_HUD.m_StartCountdownRoot.transform.GetChild(0).GetComponent<UILabel>();
+                UILocalize Loca = Label.GetComponent<UILocalize>();
                 if (Loca)
                 {
                     UnityEngine.Object.Destroy(Loca);
                 }
 
-                Lable.text = s_TimerPrefix;
+                Label.text = s_TimerPrefix;
 
                 s_HUD.m_StartCountdownLabel.text = string.Format("{0:0}:{1:00}", Minutes, Seconds);
             }
         }
 
-        // [HarmonyLib.HarmonyPatch(typeof(Panel_HUD), "Enable")]
-        // private static class Panel_HUD_Enable
-        // {
-        //     private static void Postfix(Panel_HUD __instance)
-        //     {
-        //         if (__instance.m_ExperimentalBuildLabel)
-        //         {
-        //             __instance.m_ExperimentalBuildLabel.gameObject.SetActive(true);
-        //             __instance.m_ExperimentalBuildLabel.text = $"{BuildInfo.ModName} {BuildInfo.ModVersion}";
-        //         }
-        //     }
-        // }
+        [HarmonyLib.HarmonyPatch(typeof(Panel_HUD), "Enable")]
+        private static class Panel_HUD_Enable
+        {
+            private static void Postfix(Panel_HUD __instance)
+            {
+                if (__instance.m_ExperimentalBuildLabel)
+                {
+                    __instance.m_ExperimentalBuildLabel.gameObject.SetActive(true);
+                    __instance.m_ExperimentalBuildLabel.text = $"{BuildInfo.ModName} {BuildInfo.ModVersion}";
+                }
+            }
+        }
     }
 }

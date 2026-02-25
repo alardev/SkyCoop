@@ -582,8 +582,7 @@ namespace SkyCoopClient
                 GameManager.GetConditionComponent().ResetAudio();
                 ClientSend.SendRespawnRequest();
                 MenuHook.RemovePleaseWait();
-                MenuHook.DoPleaseWait("Взламываем твой камютэр, жди...", "Грузим шпингалеты...");
-                return false;
+                return true;
             }
         }
         [HarmonyLib.HarmonyPatch(typeof(Condition), "PlayDeathMusic")]

@@ -121,9 +121,9 @@ namespace SkyCoopClient
             return null;
         }
 
-        public static void ReintilizeViewModels()
+        public static void ReinitializeViewModels()
         {
-            //SkyCoop.Logger.Log("ReintilizeViewModels");
+            //SkyCoop.Logger.Log("ReinitializeViewModels");
             s_MeshsByGearName.Clear();
             s_Meshes.Clear();
             GameObject ParnetObject = GameObject.Find(HandPropSearchPath);
