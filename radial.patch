@@ -1,0 +1,1076 @@
+From 94cee0c63480be0643fb1cb7b2aaa563248b070c Mon Sep 17 00:00:00 2001
+From: Filigrani <filigranisb@gmail.com>
+Date: Sun, 22 Feb 2026 13:26:44 +0400
+Subject: [PATCH] Radial spawns test
+
+---
+ SkyCoopClient/DebugConsole.cs             |  17 ++
+ SkyCoopClient/MeleeManager.cs             |  15 +-
+ SkyCoopClient/Minimalizer.cs              |  16 +-
+ SkyCoopClient/PlayersManager.cs           |   6 +-
+ SkyCoopClient/RadialLootSpawnersEditor.cs | 204 +++++++++++++++++++
+ SkyCoopServer/DataStr.cs                  | 234 +++++++++++++++++++++-
+ SkyCoopServer/Extensions.cs               |  58 ++++++
+ SkyCoopServer/FilesManager.cs             |  93 ++++++++-
+ SkyCoopServer/LootTableManager.cs         | 127 ++++++++++++
+ SkyCoopServer/Packet.cs                   |   2 +
+ SkyCoopServer/ScenesDataManager.cs        |  37 ++++
+ SkyCoopServer/Server.cs                   |   3 +
+ SkyCoopServer/ServerHandle.cs             |  13 ++
+ 13 files changed, 811 insertions(+), 14 deletions(-)
+ create mode 100644 SkyCoopClient/RadialLootSpawnersEditor.cs
+ create mode 100644 SkyCoopServer/Extensions.cs
+ create mode 100644 SkyCoopServer/LootTableManager.cs
+
+diff --git a/SkyCoopClient/DebugConsole.cs b/SkyCoopClient/DebugConsole.cs
+index 3f5aeb8..bfc04d0 100644
+--- a/SkyCoopClient/DebugConsole.cs
++++ b/SkyCoopClient/DebugConsole.cs
+@@ -14,6 +14,9 @@ public static void RegisterCommands()
+         {
+             uConsole.RegisterCommand("RecursiveDebug", new Action(RecursiveDebug));
+             uConsole.RegisterCommand("sv_cmd", new Action(SV_CMD));
++            uConsole.RegisterCommand("radial_spawn_add", new Action(RadialSpawnAdd));
++            uConsole.RegisterCommand("radial_spawn_remove", new Action(RadialSpawnRemove));
++            uConsole.RegisterCommand("radial_spawn_save", new Action(RadialSpawnRemove));
+         }
+ 
+         // Keeping old command, just in case if it still being used by force of habit.
+@@ -26,5 +29,19 @@ public static void SV_CMD()
+         {
+             ClientSend.SendSV_CMD(uConsole.GetString());
+         }
++        public static void RadialSpawnAdd()
++        {
++            RadialLootSpawnersEditor.CreateSpawner();
++            RadialLootSpawnersEditor.Vizualize();
++        }
++        public static void RadialSpawnRemove()
++        {
++            RadialLootSpawnersEditor.Remove();
++            RadialLootSpawnersEditor.Vizualize();
++        }
++        public static void RadialSpawnSave()
++        {
++            RadialLootSpawnersEditor.Save();
++        }
+     }
+ }
+diff --git a/SkyCoopClient/MeleeManager.cs b/SkyCoopClient/MeleeManager.cs
+index 0fb2c89..d6e5a83 100644
+--- a/SkyCoopClient/MeleeManager.cs
++++ b/SkyCoopClient/MeleeManager.cs
+@@ -242,13 +242,16 @@ private static void Postfix(ItemDescriptionPage __instance, GearItem gi, ref str
+                     //}
+                     }else if(gi.m_ClothingItem)
+                     {
+-                        if (gi.m_ClothingItem.IsWearing())
++                        if(ModMain.Client != null && !ModMain.Client.m_Rules.m_Clothing)
+                         {
+-                            __result = "GAMEPLAY_Takeoff";
+-                        }
+-                        else
+-                        {
+-                            __result = "GAMEPLAY_Wear";
++                            if (gi.m_ClothingItem.IsWearing())
++                            {
++                                __result = "GAMEPLAY_Takeoff";
++                            }
++                            else
++                            {
++                                __result = "GAMEPLAY_Wear";
++                            }
+                         }
+                     }
+                 }
+diff --git a/SkyCoopClient/Minimalizer.cs b/SkyCoopClient/Minimalizer.cs
+index 02433ef..4a5370c 100644
+--- a/SkyCoopClient/Minimalizer.cs
++++ b/SkyCoopClient/Minimalizer.cs
+@@ -22,10 +22,16 @@ private static void Postfix(MiniTopNav __instance)
+             {
+                 if (!ModMain.IsMultiplayer()) { return; }
+ 
++                bool Clothing = ModMain.Client != null && ModMain.Client.m_Rules.m_Clothing;
++
+                 for (int i = __instance.m_ActiveElements.Count - 1; i >= 0; i--)
+                 {
+                     MiniTopNavButton butt = __instance.m_ActiveElements[i];
+-                    if (butt && (butt.name != "SpriteFirstAid" && butt.name != "SpriteInventory" && butt.name != "SpriteInventory"))
++                    if (butt.name == "SpriteClothing" && Clothing)
++                    {
++                        continue;
++                    }
++                    if (butt && (butt.name != "SpriteFirstAid" && butt.name != "SpriteInventory"))
+                     {
+                         __instance.m_ActiveElements.RemoveAt(i);
+                     }
+@@ -33,7 +39,11 @@ private static void Postfix(MiniTopNav __instance)
+                 for (int i = __instance.m_NavElements.Count - 1; i >= 0; i--)
+                 {
+                     MiniTopNavButton butt = __instance.m_NavElements[i];
+-                    if (butt && (butt.name != "SpriteFirstAid" && butt.name != "SpriteInventory" && butt.name != "SpriteInventory"))
++                    if (butt.name == "SpriteClothing" && Clothing)
++                    {
++                        continue;
++                    }
++                    if (butt && (butt.name != "SpriteFirstAid" && butt.name != "SpriteInventory"))
+                     {
+                         butt.SetEnabled(false);
+                         butt.gameObject.SetActive(false);
+@@ -48,7 +58,7 @@ private static bool Prefix(Panel_Clothing __instance)
+             {
+                 if (!ModMain.IsMultiplayer()) { return true; }
+ 
+-                return false;
++                return ModMain.Client != null && ModMain.Client.m_Rules.m_Clothing;
+             }
+         }
+         [HarmonyLib.HarmonyPatch(typeof(Panel_Map), "Enable", new System.Type[] { typeof(bool)})]
+diff --git a/SkyCoopClient/PlayersManager.cs b/SkyCoopClient/PlayersManager.cs
+index 5527e84..3c892e5 100644
+--- a/SkyCoopClient/PlayersManager.cs
++++ b/SkyCoopClient/PlayersManager.cs
+@@ -1220,7 +1220,11 @@ public static void GiveoutKit(List<StartingGearData> StartingKit)
+                         if (GearItem.m_ClothingItem)
+                         {
+                             GearItem.m_ClothingItem.PutOn();
+-                            GearItem.m_NarrativeCollectibleItem = GearItem.gameObject.AddComponent<NarrativeCollectibleItem>();
++
++                            if(ModMain.Client != null && !ModMain.Client.m_Rules.m_Clothing)
++                            {
++                                GearItem.m_NarrativeCollectibleItem = GearItem.gameObject.AddComponent<NarrativeCollectibleItem>();
++                            }
+                         }
+                     }
+                 }
+diff --git a/SkyCoopClient/RadialLootSpawnersEditor.cs b/SkyCoopClient/RadialLootSpawnersEditor.cs
+new file mode 100644
+index 0000000..9360104
+--- /dev/null
++++ b/SkyCoopClient/RadialLootSpawnersEditor.cs
+@@ -0,0 +1,204 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using UnityEngine.UI;
++using System.Text.Json;
++using System.Reflection;
++using UnityEngine;
++using Il2Cpp;
++using SkyCoop;
++using SkyCoopServer;
++using Il2CppTMPro;
++using static SkyCoopServer.DataStr;
++
++namespace SkyCoopClient
++{
++    // Это едитор для раставления точек спавна для нашего режима *[REDACTED]*
++    // Так как на выделеном сервере нет ассетов игры, нам нужно записывать возможнные точки спавна на ландшавте самим.
++    // По этому мы и кидаем кучу рейкастов что бы тупо "пощупать" ландшафт и сохранить там где можно ставить лут.
++    
++    public class RadialLootSpawnersEditor
++    {
++        public static string s_RadialSpawnersDirectory = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/SkyModData/Editor/RadialLootSpawners";
++        public static List<DataStr.RadialLootSpawner> s_Spawners = new List<DataStr.RadialLootSpawner>();
++        public static List<GameObject> s_Vizualizers = new List<GameObject>();
++
++        public const float c_UpwardRaycastLength = 3f;
++        public const float c_SpawnerRange = 3.5f;
++        public const float c_MaxRaycastLength = 5f;
++        public const float c_MaxPointsPerSpawner = 30;
++
++        public static GameObject CreateDebugPrimitive(PrimitiveType Type, string Name, UnityEngine.Color Color, Transform Parent = null)
++        {
++            GameObject Obj = GameObject.CreatePrimitive(Type);
++            Obj.name = Name;
++            if (Parent)
++            {
++                Obj.transform.SetParent(Parent);
++            }
++            Obj.GetComponent<Renderer>().material.color = Color;
++            UnityEngine.Object.Destroy(Obj.GetComponent<Collider>());
++            return Obj;
++        }
++
++        public static void Remove()
++        {
++            s_Spawners.RemoveAt(s_Spawners.Count - 1);
++        }
++
++        public static void Save()
++        {
++            RadialLootSpawnerSave Save = new RadialLootSpawnerSave();
++            Save.spawners = new List<RadialLootSpawner>(s_Spawners);
++
++            string JSON = JsonSerializer.Serialize<RadialLootSpawnerSave>(Save);
++            SkyCoop.Logger.Log(JSON);
++
++            string FileName = ModMain.GetCurrentSceneName();
++
++            SkyCoop.Logger.Log(ConsoleColor.Blue, $"Saving PropDataSave for scene {FileName}");
++            try
++            {
++                if (!Directory.Exists(s_RadialSpawnersDirectory))
++                    Directory.CreateDirectory(s_RadialSpawnersDirectory);
++                File.WriteAllText($"{s_RadialSpawnersDirectory}/{FileName}", JSON);
++            }
++            catch (Exception e)
++            {
++                SkyCoop.Logger.Log(ConsoleColor.Red, $"Cant save file! Error: {e.Message}");
++            }
++        }
++
++
++        public static void CreateSpawner()
++        {
++            if (GameManager.m_PlayerObject)
++            {
++                Vector3 centerPos = GameManager.GetPlayerTransform().position;
++
++                float Top = c_UpwardRaycastLength;
++
++                LayerMask RayCastMask = (1 << vp_Layer.Default) |
++                (1 << vp_Layer.InteractiveProp) |
++                (1 << vp_Layer.InteractivePropNoCollidePlayer) |
++                (1 << vp_Layer.Container) |
++                (1 << vp_Layer.Buildings) |
++                (1 << vp_Layer.Decoration) |
++                (1 << vp_Layer.Ground) |
++                (1 << vp_Layer.GroundNoNavmesh) |
++                (1 << vp_Layer.Water) |
++                (1 << vp_Layer.TerrainObject);
++
++                List<System.Numerics.Vector3> Points = new List<System.Numerics.Vector3>();
++
++                if(Physics.Raycast(centerPos, Vector3.up, out RaycastHit _hit, Top, RayCastMask))
++                {
++                    Top = Vector3.Distance(centerPos, _hit.point);
++                }
++
++                Vector3 rayStart = centerPos;
++                Vector3 peakPoint = rayStart + Vector3.up * Top;
++
++                for (int i = 0; i < c_MaxPointsPerSpawner; i++)
++                {
++                    float angle = UnityEngine.Random.Range(0f, 360f);
++                    float distance = UnityEngine.Random.Range(0f, c_SpawnerRange);
++
++                    // Создаем направление от пиковой точки
++                    Vector3 horizontalDirection = Quaternion.Euler(0, angle, 0) * Vector3.forward;
++                    Vector3 rayOrigin = peakPoint + horizontalDirection * distance;
++
++                    // Луч вниз от случайной точки вокруг пика
++                    if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, c_MaxRaycastLength, RayCastMask))
++                    {
++                        Vector3 surfaceNormal = hit.normal;
++                        bool isWall = Mathf.Abs(surfaceNormal.y) < 0.1f;
++                        bool isTooSteep = surfaceNormal.y < 0.7f;
++
++                        if (!isWall && !isTooSteep)
++                        {
++                            //Vector3 spawnPos = hit.point + Vector3.up * 0.1f;
++                            Points.Add(hit.point.ConvertToSystem());
++                        }
++                    }
++                    else
++                    {
++                        SkyCoop.Logger.Log(ConsoleColor.Yellow, $"[RadialLootSpawnersEditor] Raycast failed for point {i}");
++                    }
++                }
++                DataStr.RadialLootSpawner Spawner = new DataStr.RadialLootSpawner();
++                Spawner.m_Center = centerPos.ConvertToSystem();
++                Spawner.m_AvaliblePoints = Points;
++                Spawner.m_Top = Top;
++                s_Spawners.Add(Spawner);
++            }
++        }
++
++        public static void Vizualize()
++        {
++            //                                    да-да мин-максим проверяя только -1, и в тоже время пишим говно код, оптимизатор я от бога конечно.
++            for (int i = s_Vizualizers.Count-1; i != -1; i--)
++            {
++                GameObject Obj = s_Vizualizers[i];
++                if (Obj) // Если удалить объект он всё ещё будет налом в листе. Хер его знает, сцену там поменяешь, да ты и сам потом будешь орать когда удалишь в эксплорере.
++                {
++                    UnityEngine.Object.Destroy(Obj);
++                }
++            }
++            s_Vizualizers.Clear();
++
++            foreach (DataStr.RadialLootSpawner Spawner in s_Spawners)
++            {
++                Transform Dummy = new GameObject("RadialLootSpawnerPoint").transform;
++
++                GameObject UpwardRay = CreateDebugPrimitive(PrimitiveType.Cube, "UpwardRay", UnityEngine.Color.green, Dummy);
++                UpwardRay.transform.localScale = new Vector3(0.3f, Spawner.m_Top, 0.3f);
++
++                // У всех примитивов пивот в центре. По этому все "лучи" которые мы будем визиуализировать мы присираем в цетре а не в их начале.
++                Vector3 rayStart = Spawner.m_Center.ConvertToUnity();
++                Vector3 rayEnd = rayStart + Vector3.up * Spawner.m_Top;
++                UpwardRay.transform.position = (rayStart + rayEnd) * 0.5f;
++
++                foreach (System.Numerics.Vector3 Point in Spawner.m_AvaliblePoints)
++                {
++                    Vector3 pointUnity = Point.ConvertToUnity();
++                    Vector3 pointRayEnd = pointUnity + Vector3.up * Spawner.m_Top;
++
++                    Transform SubDummy = new GameObject("Point").transform;
++                    SubDummy.position = pointUnity;
++
++                    GameObject SpawnerPoint = CreateDebugPrimitive(PrimitiveType.Sphere, "Point", UnityEngine.Color.red, SubDummy);
++                    SpawnerPoint.transform.localScale = Vector3.one * 0.3f; // Учись пока я жив. Это быстрее чем new Vector3(0.3f, 0.3f, 0.3f);
++                    SpawnerPoint.transform.position = pointUnity;
++
++                    GameObject RayToPeak = CreateDebugPrimitive(PrimitiveType.Cube, "Ray", UnityEngine.Color.red, SubDummy);
++
++                    float Distance = Vector3.Distance(pointUnity, rayEnd);
++                    Vector3 direction = (rayEnd - pointUnity).normalized;
++
++                    RayToPeak.transform.position = pointUnity + direction * (Distance * 0.5f);
++                    RayToPeak.transform.rotation = Quaternion.LookRotation(direction);
++                    RayToPeak.transform.Rotate(90, 0, 0);
++                    RayToPeak.transform.localScale = new Vector3(0.2f, Distance, 0.2f);
++
++                    //string GearName = LootTableManager.GetRandomLoot();
++                    //if (ModMain.Server != null && ModMain.Server.m_IsReady)
++                    //{
++                    //    if (ModMain.Server.m_ScenesData != null)
++                    //    {
++                    //        
++                    //        ModMain.Server.m_ScenesData.AddGear(PlayersManager.m_LocalPlayerData.m_LastSentScene, GearName, Point, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0).ConvertToSystem(), string.Empty);
++                    //    }
++                    //}
++                    SubDummy.SetParent(Dummy);
++                }
++
++                //Dummy.gameObject.SetActive(false);
++
++                s_Vizualizers.Add(Dummy.gameObject);
++            }
++        }
++    }
++}
+diff --git a/SkyCoopServer/DataStr.cs b/SkyCoopServer/DataStr.cs
+index 1469f18..a70f14c 100644
+--- a/SkyCoopServer/DataStr.cs
++++ b/SkyCoopServer/DataStr.cs
+@@ -7,6 +7,7 @@
+ using System.IO;
+ using System.Linq;
+ using static SkyCoopServer.DataStr;
++using System.ComponentModel.DataAnnotations;
+ 
+ namespace SkyCoopServer
+ {
+@@ -15,13 +16,13 @@ public class DataStr
+         public class ServerConfig
+         {
+             public int m_MaxPlayers = 4;
+-            public string m_StartingRegion = "CoastalRegion";
++            public string m_StartingRegion = "MarshRegion";
+             public int m_Seed = 777777;
+             public int m_VoicePort = 37850;
+             //public int m_VoicePort = 0;
+             public string m_ExperienceMode = "Stalker";
+-            public string m_SceneToSpawn = "CoastalRegion";
+-            public string m_GameMode = "GunGame";
++            public string m_SceneToSpawn = "MarshRegion";
++            public string m_GameMode = "Shrink";
+         }
+ 
+         public class GameRulesSave
+@@ -34,6 +35,7 @@ public class GameRulesSave
+             public string HUDMode { get; set; }
+             public bool DeathPacks { get; set; }
+             public bool Respawns { get; set; }
++            public bool Clothing { get; set; }
+         }
+ 
+         public class GameRules
+@@ -46,6 +48,7 @@ public class GameRules
+             public string m_HUDMode = "";
+             public bool m_DeathPacks = false;
+             public bool m_Respawns = false;
++            public bool m_Clothing = false;
+         }
+ 
+         public class StartingGearData
+@@ -1186,5 +1189,230 @@ public class PropData
+             public float rotw { get; set; }
+             public string guid { get; set; }
+         }
++
++        public class RadialLootSpawnerSave
++        {
++            public List<RadialLootSpawner> spawners { get; set; }
++        }
++
++        public class RadialLootSpawner
++        {
++            public Vector3 m_Center = Vector3.Zero;
++            public float m_Top = 0;
++            public List<Vector3> m_AvaliblePoints = new List<Vector3>();
++        }
++
++        public class PrefabTable
++        {
++            public List<Loot> Items = new List<Loot>();
++            public List<LootTableInLootTable> LootTables = new List<LootTableInLootTable>();
++
++            private float m_TotalWeights = -1f;
++
++            public void CalculateWeights()
++            {
++                if (Items.Count == 0)
++                {
++                    CalculateLootTableWeights();
++                }
++                if (LootTables.Count == 0)
++                {
++                    CalculateItemWeights();
++                }
++                CalculateCombinedWeights();
++            }
++
++            public string GetRandomItemPrefab(int Seed = -1)
++            {
++                if (Items.Count == 0 && LootTables.Count == 0)
++                {
++                    return null;
++                }
++
++                if (Seed == -1)
++                {
++                    Seed = System.Guid.NewGuid().GetHashCode();
++                }
++
++                System.Random RNG = new System.Random(Seed);
++
++                if (Items.Count == 0)
++                {
++                    return GetRandomFromLootTables(RNG);
++                }
++                if (LootTables.Count == 0)
++                {
++                    return GetRandomFromItems(RNG);
++                }
++                return GetCombinedWeightedRandom(RNG);
++            }
++
++            private string GetRandomFromItems(System.Random RNG)
++            {
++                if (Items.Count == 1)
++                {
++                    if (RandomCheck(RNG, Items[0].Chance))
++                        return Items[0].Prefab;
++                    return null;
++                }
++                return GetWeightedRandomItem(RNG);
++            }
++
++            private string GetRandomFromLootTables(System.Random RNG)
++            {
++                if (LootTables.Count == 1)
++                {
++                    if (RandomCheck(RNG, LootTables[0].Chance))
++                        return LootTables[0].GetItem();
++                    return null;
++                }
++                return GetWeightedRandomLootTableItem(RNG);
++            }
++
++            private string GetCombinedWeightedRandom(System.Random RNG)
++            {
++                if (m_TotalWeights <= 0)
++                    return null;
++
++                float randomValue = RNG.Range(0f, m_TotalWeights);
++                float cumulativeWeight = 0f;
++
++                // Check items first
++                foreach (var loot in Items)
++                {
++                    cumulativeWeight += loot.Chance;
++                    if (randomValue <= cumulativeWeight)
++                    {
++                        return loot.Prefab;
++                    }
++                }
++
++                // Then check loot tables
++                foreach (var lootTable in LootTables)
++                {
++                    cumulativeWeight += lootTable.Chance;
++                    if (randomValue <= cumulativeWeight)
++                    {
++                        return lootTable.GetItem();
++                    }
++                }
++
++                // Fallback in case of floating point precision issues
++                if (Items.Count > 0)
++                    return Items[Items.Count - 1].Prefab;
++                else
++                    return LootTables[LootTables.Count - 1].GetItem();
++            }
++
++            private string GetWeightedRandomItem(System.Random RNG)
++            {
++                if (m_TotalWeights <= 0)
++                    return null;
++
++                float randomValue = RNG.Range(0f, m_TotalWeights);
++                float cumulativeWeight = 0f;
++
++                foreach (var loot in Items)
++                {
++                    cumulativeWeight += loot.Chance;
++                    if (randomValue <= cumulativeWeight)
++                    {
++                        return loot.Prefab;
++                    }
++                }
++
++                return Items[Items.Count - 1].Prefab;
++            }
++
++            private string GetWeightedRandomLootTableItem(System.Random RNG)
++            {
++                if (m_TotalWeights <= 0)
++                    return null;
++
++                float randomValue = RNG.Range(0f, m_TotalWeights);
++                float cumulativeWeight = 0f;
++
++                foreach (var lootTable in LootTables)
++                {
++                    cumulativeWeight += lootTable.Chance;
++                    if (randomValue <= cumulativeWeight)
++                    {
++                        return lootTable.GetItem();
++                    }
++                }
++
++                return LootTables[LootTables.Count - 1].GetItem();
++            }
++
++            private void CalculateCombinedWeights()
++            {
++                m_TotalWeights = 0f;
++                foreach (var loot in Items)
++                {
++                    m_TotalWeights += loot.Chance;
++                }
++                foreach (var lootTable in LootTables)
++                {
++                    m_TotalWeights += lootTable.Chance;
++                }
++            }
++
++            private void CalculateItemWeights()
++            {
++                m_TotalWeights = 0f;
++                foreach (var loot in Items)
++                {
++                    m_TotalWeights += loot.Chance;
++                }
++            }
++
++            private void CalculateLootTableWeights()
++            {
++                m_TotalWeights = 0f;
++                foreach (var lootTable in LootTables)
++                {
++                    m_TotalWeights += lootTable.Chance;
++                }
++            }
++
++            private bool RandomCheck(System.Random RNG, float chance)
++            {
++                return RNG.NextSingle() <= chance;
++            }
++        }
++
++        public class PrefabTableJSON
++        {
++            public List<Loot> Items { get; set; }
++            public List<LootTableInLootTableJSON> LootTables { get; set; }
++        }
++
++        public class Loot
++        {
++            public string Prefab { get; set; }
++            public float Chance { get; set; } // 0 - 1
++        }
++
++        public class LootTableInLootTableJSON
++        {
++            public string LootTable { get; set; }
++            public float Chance { get; set; } // 0 - 1
++        }
++
++        public class LootTableInLootTable
++        {
++            public string Name = string.Empty;
++            public PrefabTable LootTable { get; set; }
++            public float Chance { get; set; } // 0 - 1
++
++            public string GetItem()
++            {
++                if (LootTable != null)
++                {
++                    return LootTable.GetRandomItemPrefab();
++                }
++                return string.Empty;
++            }
++        }
+     }
+ }
+diff --git a/SkyCoopServer/Extensions.cs b/SkyCoopServer/Extensions.cs
+new file mode 100644
+index 0000000..104d045
+--- /dev/null
++++ b/SkyCoopServer/Extensions.cs
+@@ -0,0 +1,58 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Numerics;
++using System.Text;
++using System.Threading.Tasks;
++
++namespace SkyCoopServer
++{
++    public static class Extensions
++    {
++        
++        // System.Random экстеншены что бы они работали на подоби UnityEngine.Random.Range
++        public static int Range(this Random random, int min, int max)
++        {
++            return random.Next(min, max);
++        }
++        public static double Range(this Random random, double min, double max)
++        {
++            return min + random.NextDouble() * (max - min);
++        }
++        public static float Range(this Random random, float min, float max)
++        {
++            return min + (float)random.NextDouble() * (max - min);
++        }
++
++        public static Quaternion Euler(Vector3 euler)
++        {
++            return Euler(euler.X, euler.Y, euler.Z);
++        }
++
++        public static Quaternion Euler(float x, float y, float z)
++        {
++            float degToRad = MathF.PI / 180f;
++            x *= degToRad;
++            y *= degToRad;
++            z *= degToRad;
++
++            float halfX = x * 0.5f;
++            float halfY = y * 0.5f;
++            float halfZ = z * 0.5f;
++
++            float sinX = MathF.Sin(halfX);
++            float cosX = MathF.Cos(halfX);
++            float sinY = MathF.Sin(halfY);
++            float cosY = MathF.Cos(halfY);
++            float sinZ = MathF.Sin(halfZ);
++            float cosZ = MathF.Cos(halfZ);
++
++            float w = cosX * cosY * cosZ + sinX * sinY * sinZ;
++            float qx = sinX * cosY * cosZ - cosX * sinY * sinZ;
++            float qy = cosX * sinY * cosZ + sinX * cosY * sinZ;
++            float qz = cosX * cosY * sinZ - sinX * sinY * cosZ;
++
++            return new Quaternion(qx, qy, qz, w);
++        }
++    }
++}
+diff --git a/SkyCoopServer/FilesManager.cs b/SkyCoopServer/FilesManager.cs
+index 646aa1e..f9bfd0f 100644
+--- a/SkyCoopServer/FilesManager.cs
++++ b/SkyCoopServer/FilesManager.cs
+@@ -1,4 +1,5 @@
+-﻿using System.Numerics;
++﻿using System.Collections.Generic;
++using System.Numerics;
+ using System.Reflection;
+ using System.Text.Json;
+ using static SkyCoopServer.DataStr;
+@@ -13,6 +14,8 @@ public class FilesManager
+         public static string s_VictoryPlaceDirectory = "Victory";
+         public static string s_PropsDirectory = "Props";
+         public static string s_RulesFileName = "Rules";
++        public static string s_LootTablesDirectory = "LootTables";
++        public static string s_RadialLootSpawnersDirectory = "RadialLootSpawners";
+         public static string s_DataDirectory = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}/SkyModData";
+ 
+         public static GameRules GetRules(string GameMode)
+@@ -58,6 +61,7 @@ public static GameRules GetRules(string GameMode)
+             Rules.m_HUDMode = Save.HUDMode;
+             Rules.m_Respawns = Save.Respawns;
+             Rules.m_DeathPacks = Save.DeathPacks;
++            Rules.m_Clothing = Save.Clothing;
+             return Rules;
+         }
+ 
+@@ -219,5 +223,92 @@ public static PropDataSave GetProps(string GameMode, string Scene)
+             Save = JsonSerializer.Deserialize<PropDataSave>(JSON);
+             return Save;
+         }
++
++        public static Dictionary<string, PrefabTableJSON> GetAllLootTables()
++        {
++            Dictionary<string, PrefabTableJSON> Dict = new Dictionary<string, PrefabTableJSON>();
++            string _Path = $"{s_DataDirectory}/{s_LootTablesDirectory}";
++            if (Directory.Exists(_Path))
++            {
++                string[] AllFiles = Directory.GetFiles(_Path, "*", SearchOption.AllDirectories);
++
++                foreach (string FilePath in AllFiles)
++                {
++                    PrefabTableJSON Table = GetLootTable(FilePath);
++                    if (Table != null)
++                    {
++                        string Name = Path.GetFileNameWithoutExtension(FilePath);
++                        if (!Dict.ContainsKey(Name))
++                        {
++                            Dict.Add(Name, Table);
++                        }
++                    }
++                }
++            }
++            return Dict;
++        }
++
++        public static PrefabTableJSON GetLootTable(string Path)
++        {
++            string JSON = "";
++
++            Logger.Log($"[FilesManager] Loading loot table {Path}");
++            if (File.Exists(Path))
++            {
++                try
++                {
++                    JSON = File.ReadAllText(Path);
++                }
++                catch (Exception e)
++                {
++                    Logger.Log($"[FilesManager] Failed to load {Path}: {e.Message}");
++                    return null;
++                }
++            }
++            else
++            {
++                Logger.Log($"[FilesManager] File {Path} not exist");
++                return null;
++            }
++
++            if (string.IsNullOrEmpty(JSON))
++            {
++                Logger.Log($"[FilesManager] File {Path} is empty");
++                return null;
++            }
++            return JsonSerializer.Deserialize<PrefabTableJSON>(JSON);
++        }
++        public static RadialLootSpawnerSave GetRadialLootSpawners(string GameMode, string Scene)
++        {
++            RadialLootSpawnerSave Save = new RadialLootSpawnerSave();
++            string Path = $"{s_DataDirectory}/{GameMode}/{s_RadialLootSpawnersDirectory}/{Scene}";
++            string JSON = "";
++
++            Logger.Log($"[FilesManager] Loading file {GameMode}/{s_RadialLootSpawnersDirectory}/{Scene}");
++            if (File.Exists(Path))
++            {
++                try
++                {
++                    JSON = File.ReadAllText(Path);
++                }
++                catch (Exception e)
++                {
++                    Logger.Log($"[FilesManager] Failed to load {Path}: {e.Message}");
++                    return null;
++                }
++            }
++            else
++            {
++                Logger.Log($"[FilesManager] File {GameMode}/{s_RadialLootSpawnersDirectory}/{Scene} not exist");
++            }
++
++            if (string.IsNullOrEmpty(JSON))
++            {
++                Logger.Log($"[FilesManager] File {GameMode}/{s_RadialLootSpawnersDirectory}/{Scene} is empty");
++                return null;
++            }
++            Save = JsonSerializer.Deserialize<RadialLootSpawnerSave>(JSON);
++            return Save;
++        }
+     }
+ }
+diff --git a/SkyCoopServer/LootTableManager.cs b/SkyCoopServer/LootTableManager.cs
+new file mode 100644
+index 0000000..1cd8262
+--- /dev/null
++++ b/SkyCoopServer/LootTableManager.cs
+@@ -0,0 +1,127 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Diagnostics;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++
++namespace SkyCoopServer
++{
++    public class LootTableManager
++    {
++        public static Dictionary<string, DataStr.PrefabTable> s_LootTables = new Dictionary<string, DataStr.PrefabTable> ();
++
++        public static string GetRandomLoot(string LootTableName = "Main")
++        {
++            SkyCoopServer.Logger.Log($"GetRandomLoot from table {LootTableName}");
++            DataStr.PrefabTable LootTable = null;
++
++            if(s_LootTables.TryGetValue(LootTableName, out LootTable))
++            {
++                string Prefab = LootTable.GetRandomItemPrefab();
++                SkyCoopServer.Logger.Log($"Got loot {Prefab}");
++                return Prefab;
++            }
++
++            return string.Empty;
++        }
++
++        public static void Load()
++        {
++            s_LootTables.Clear();
++
++            Dictionary<string, DataStr.PrefabTableJSON> Jsons = FilesManager.GetAllLootTables();
++
++            // Первый проход: создаем все таблицы без связей
++            foreach (var jsonPair in Jsons)
++            {
++                string tableName = jsonPair.Key;
++                DataStr.PrefabTableJSON jsonTable = jsonPair.Value;
++
++                DataStr.PrefabTable tableInstance = new DataStr.PrefabTable();
++
++                // Заполняем Items
++                if (jsonTable.Items != null)
++                {
++                    foreach (var item in jsonTable.Items)
++                    {
++                        tableInstance.Items.Add(new DataStr.Loot
++                        {
++                            Prefab = item.Prefab,
++                            Chance = item.Chance
++                        });
++                    }
++                }
++
++                // Создаем пустые LootTables (связи установим во втором проходе)
++                if (jsonTable.LootTables != null)
++                {
++                    foreach (var lootTableJson in jsonTable.LootTables)
++                    {
++                        tableInstance.LootTables.Add(new DataStr.LootTableInLootTable
++                        {
++                            Name = lootTableJson.LootTable,
++                            LootTable = null, // Установим во втором проходе
++                            Chance = lootTableJson.Chance
++                        });
++                    }
++                }
++
++                s_LootTables[tableName] = tableInstance;
++            }
++
++            // Второй проход: устанавливаем связи между таблицами
++            foreach (var Pair in s_LootTables)
++            {
++                if(Pair.Value.LootTables == null)
++                {
++                    Pair.Value.LootTables = new List<DataStr.LootTableInLootTable>();
++                }
++                else
++                {
++                    foreach (DataStr.LootTableInLootTable SubTable in Pair.Value.LootTables)
++                    {
++                        if (!string.IsNullOrEmpty(SubTable.Name))
++                        {
++                            SubTable.LootTable = s_LootTables[SubTable.Name];
++                        }
++                    }
++                }
++                Pair.Value.CalculateWeights();
++            }
++
++            SkyCoopServer.Logger.Log($"Loaded {s_LootTables.Count} loot tables");
++
++
++            foreach (var item in s_LootTables)
++            {
++                string tableName = item.Key;
++                DataStr.PrefabTable table = item.Value;
++
++                SkyCoopServer.Logger.Log($"=================={tableName}==================");
++                foreach (var _item in table.Items)
++                {
++                    SkyCoopServer.Logger.Log($"Prefab - {_item.Prefab} Chance - {_item.Chance}");
++                }
++
++                foreach (var _subtables in table.LootTables)
++                {
++                    if(_subtables != null)
++                    {
++                        if(_subtables.LootTable != null)
++                        {
++                            SkyCoopServer.Logger.Log($"SubTable - {_subtables.Name} Chance {_subtables.Chance}");
++                            //foreach (var _item in _subtables.LootTable.Items)
++                            //{
++                            //    if (_item != null)
++                            //    {
++                            //        SkyCoopServer.Logger.Log($"============> Prefab - {_item.Prefab} Chance - {_item.Chance}");
++                            //    }
++                            //}
++                        }
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/SkyCoopServer/Packet.cs b/SkyCoopServer/Packet.cs
+index d5ff17d..b5c2cc4 100644
+--- a/SkyCoopServer/Packet.cs
++++ b/SkyCoopServer/Packet.cs
+@@ -184,6 +184,7 @@ public static void Put(this NetDataWriter Writer, DataStr.GameRules Rules)
+             Writer.Put(Rules.m_HUDMode);
+             Writer.Put(Rules.m_DeathPacks);
+             Writer.Put(Rules.m_Respawns);
++            Writer.Put(Rules.m_Clothing);
+         }
+ 
+         public static DataStr.GameRules GetRules(this NetDataReader Reader)
+@@ -197,6 +198,7 @@ public static DataStr.GameRules GetRules(this NetDataReader Reader)
+             Rules.m_HUDMode = Reader.GetString();
+             Rules.m_DeathPacks = Reader.GetBool();
+             Rules.m_Respawns = Reader.GetBool();
++            Rules.m_Clothing = Reader.GetBool();
+ 
+             return Rules;
+         }
+diff --git a/SkyCoopServer/ScenesDataManager.cs b/SkyCoopServer/ScenesDataManager.cs
+index 74ae146..6b6a98e 100644
+--- a/SkyCoopServer/ScenesDataManager.cs
++++ b/SkyCoopServer/ScenesDataManager.cs
+@@ -19,6 +19,43 @@ public ScenesDataManager(Server Server)
+             m_ServerInstance = Server;
+         }
+ 
++        public void PopulateLoot(string SceneName)
++        {
++            RadialLootSpawnerSave Data = FilesManager.GetRadialLootSpawners(m_ServerInstance.m_Config.m_GameMode, SceneName);
++
++            if(Data != null)
++            {
++                foreach (RadialLootSpawner Spawner in Data.spawners)
++                {
++                    if (Spawner != null)
++                    {
++                        int LootPerPoint = 5;
++                        List<Vector3> AvaliablePoints = new List<Vector3>();
++
++                        if(Spawner.m_AvaliblePoints.Count < LootPerPoint)
++                        {
++                            LootPerPoint = Spawner.m_AvaliblePoints.Count;
++                        }
++
++                        AvaliablePoints = Spawner.m_AvaliblePoints;
++
++                        Random RNG = new Random(Guid.NewGuid().GetHashCode());
++
++                        for (int i = 1; i <= LootPerPoint; i++)
++                        {
++                            int Index = RNG.Range(0, AvaliablePoints.Count);
++
++                            Vector3 Point = AvaliablePoints[Index];
++
++                            string GearName = LootTableManager.GetRandomLoot();
++                            AddGear(SceneName, GearName, Point, Extensions.Euler(0, RNG.Range(0, 360), 0), string.Empty);
++                            AvaliablePoints.RemoveAt(Index);
++                        }
++                    }
++                }
++            }
++        }
++
+         public void LoadScene(string SceneName)
+         {
+             if (!m_LoadedScenes.ContainsKey(SceneName))
+diff --git a/SkyCoopServer/Server.cs b/SkyCoopServer/Server.cs
+index 7e1d84b..95267bb 100644
+--- a/SkyCoopServer/Server.cs
++++ b/SkyCoopServer/Server.cs
+@@ -88,6 +88,7 @@ public Server()
+             m_ScenesData = new ScenesDataManager(this);
+ 
+             s_NextSecondCall = DateTime.Now.AddSeconds(1);
++            LootTableManager.Load();
+         }
+ 
+         public List<int> GetClientsIndexs()
+@@ -205,6 +206,8 @@ public void ChangeGameMode(string GameMode, bool RollRandomMap = false)
+             m_ScenesData.ChangeGameMode(GameMode);
+             ServerSend.SendConfigUpdated(this);
+             ServerSend.SendChangeMap(this);
++
++            m_ScenesData.PopulateLoot(m_Config.m_SceneToSpawn);
+         }
+ 
+         public void StartServer()
+diff --git a/SkyCoopServer/ServerHandle.cs b/SkyCoopServer/ServerHandle.cs
+index 46aeae4..d3c752b 100644
+--- a/SkyCoopServer/ServerHandle.cs
++++ b/SkyCoopServer/ServerHandle.cs
+@@ -565,12 +565,17 @@ public static void ClientGetTier(NetPeer Client, NetDataReader Reader, Server Se
+ 
+         public static void ProcessCMD(Server ServerInstance, string CMD, PlayerData Player)
+         {
++            Logger.Log(ConsoleColor.Cyan, $"Player {Player.m_PlayerName} (ID {Player.m_PlayerID}) sent CMD {CMD}");
++
++            
++
+             switch (CMD)
+             {
+                 case "recurs":
+                 case "recursive":
+                 case "mimic":
+                     ServerInstance.m_PlayersData.m_RecursiveDebug = !ServerInstance.m_PlayersData.m_RecursiveDebug;
++                    Logger.Log(ConsoleColor.Green, $"New m_RecursiveDebug flag is {ServerInstance.m_PlayersData.m_RecursiveDebug}");
+                     break;
+                 case "addtier":
+                     Player.AddTier(ServerInstance);
+@@ -587,6 +592,14 @@ public static void ProcessCMD(Server ServerInstance, string CMD, PlayerData Play
+                 case "join":
+                     ServerInstance.m_PlayersData.JoinRandomSquad(Player.m_PlayerID);
+                     break;
++                case "pvp":
++                    ServerInstance.m_Rules.m_PVP = !ServerInstance.m_Rules.m_PVP;
++                    ServerSend.SendConfigUpdated(ServerInstance);
++                    Logger.Log(ConsoleColor.Green, $"New m_Rules.m_PVP flag is {ServerInstance.m_Rules.m_PVP}");
++                    break;
++                default:
++                    Logger.Log(ConsoleColor.Yellow, $"Unknown CMD {CMD}");
++                    break;
+             }
+         }
+ 
