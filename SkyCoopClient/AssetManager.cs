@@ -4,6 +4,7 @@ using Il2CppSystem.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceLocations;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using MelonLoader;
 using System.IO;
 
@@ -12,44 +13,28 @@ namespace SkyCoop
 {
     internal class AssetManager
     {
-        // The modern way to get the Mods folder on ML 0.7+
-        public static string s_MainBundlePath = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "skycoop_assets_all.bundle");
+        public static string s_MainBundlePath = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "skycoop");
         public static AssetBundle s_MainBundle = null;
         public static GameObject s_PistolBulletPrefab = null;
         public static GameObject s_RevolverBulletPrefab = null;
+
 
         public static void PreloadMainBundle()
         {
             if(s_MainBundle == null)
             {
-                // Try to load the physical bundle file
                 s_MainBundle = AssetBundle.LoadFromFile(s_MainBundlePath);
 
                 if (s_MainBundle == null)
                 {
-                    // Fallback check: try find it just as 'skycoop' without extension
-                    Logger.Log(ConsoleColor.Yellow, $"Failed to load the Main Asset bundle normally. Trying to find without extension at: {s_MainBundlePath}");
-                    string fallback = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "skycoop_assets_all");
-                    s_MainBundle = AssetBundle.LoadFromFile(fallback);
-                }
-
-                if (s_MainBundle == null)
-                {
-                    Logger.Log(ConsoleColor.Red, $"Failed to load the Main Asset bundle at: {s_MainBundlePath}");
-                }
-                else
+                    Logger.Log(ConsoleColor.Red,"Error loading main asset bundle!");
+                } else
                 {
                     Logger.Log(ConsoleColor.Blue, "Main Asset Bundle is loaded.");
                 }
             }
-
-            string catalogPath = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "catalog.json");
-            
-            if (File.Exists(catalogPath))
-            {
-                Addressables.LoadContentCatalogAsync(catalogPath).WaitForCompletion();
-                Logger.Log(ConsoleColor.Green, "Addressables Catalog linked! UI should now work.");
-            }
+            //DumpAddressablesContent();
+            //DumpPrefabsList();
         }
 
         public static T GetAssetFromGame<T>(string AssetName) where T : UnityEngine.Object
@@ -68,32 +53,6 @@ namespace SkyCoop
                 }
             }
             return Asset;
-        }
-
-        public static void SetupLinuxPathFix()
-        {
-            // Explicitly define the Func to satisfy the compiler
-            Func<IResourceLocation, string> transformFunc = (IResourceLocation location) =>
-            {
-                // If the catalog is looking for a bundle file...
-                if (location.InternalId.EndsWith(".bundle"))
-                {
-                    // Extract just the filename (e.g., skycoop_assets_all.bundle)
-                    string fileName = Path.GetFileName(location.InternalId);
-                    
-                    // Build the absolute Linux path
-                    string newPath = Path.Combine(MelonLoader.Utils.MelonEnvironment.ModsDirectory, "SkyCoop", "AssetBundles", fileName);
-                    
-                    // Log it so you can see if it's working in the console
-                    Logger.Log(ConsoleColor.DarkCyan, $"[Linux Path Fix] Mapping {fileName} -> {newPath}");
-                    
-                    return newPath;
-                }
-                return location.InternalId;
-            };
-
-            // Assign the concrete delegate to the Addressables system
-            Addressables.InternalIdTransformFunc = transformFunc;
         }
 
         public static void BogusIt(GameObject Obj)
