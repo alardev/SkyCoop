@@ -15,12 +15,12 @@ namespace SkyCoopServer
         public class ServerConfig
         {
             public int m_MaxPlayers = 4;
-            public string m_StartingRegion = "CoastalRegion";
+            public string m_StartingRegion = "MarshRegion";
             public int m_Seed = 777777;
             public int m_VoicePort = 37850;
             //public int m_VoicePort = 0;
             public string m_ExperienceMode = "Stalker";
-            public string m_SceneToSpawn = "CoastalRegion";
+            public string m_SceneToSpawn = "MarshRegion";
             public string m_GameMode = "GunGame";
         }
 

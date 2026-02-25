@@ -58,14 +58,14 @@ namespace SkyCoop
             {
                 Task.Run(() => { ModMain.Client.ConnectToServerVoice(CFG.m_VoicePort); });
             }
-            GameObject SoundPlayerPrefab = AssetManager.GetAssetFromBundle<GameObject>("JoinServer");
-            if (SoundPlayerPrefab)
-            {
-               GameObject SoundPlayer = GameObject.Instantiate(SoundPlayerPrefab);
-               SoundPlayer.GetComponent<AudioSource>().Play();
-               SceneManager.DontDestroyOnLoad(SoundPlayer);
-               UnityEngine.Object.Destroy(SoundPlayer, 15);
-            }
+            // GameObject SoundPlayerPrefab = AssetManager.GetAssetFromBundle<GameObject>("JoinServer");
+            // if (SoundPlayerPrefab)
+            // {
+            //    GameObject SoundPlayer = GameObject.Instantiate(SoundPlayerPrefab);
+            //    SoundPlayer.GetComponent<AudioSource>().Play();
+            //    SceneManager.DontDestroyOnLoad(SoundPlayer);
+            //    UnityEngine.Object.Destroy(SoundPlayer, 15);
+            // }
         }
 
         public static void ServerConfigUpdated(NetDataReader Reader)

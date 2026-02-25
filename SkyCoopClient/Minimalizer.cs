@@ -155,9 +155,9 @@ namespace SkyCoopClient
         //         __instance.m_ToolsRadialOrder = new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStringArray(MeleeManager.s_MeleeWeapons.ToArray());
         //     }
         // }
-        //[HarmonyLib.HarmonyPatch(typeof(Panel_ActionsRadial), "GetDelegateForRadial")]
-        //private static class Panel_ActionsRadial_GetDelegateForRadial
-        //{
+        // [HarmonyLib.HarmonyPatch(typeof(Panel_ActionsRadial), "GetDelegateForRadial")]
+        // private static class Panel_ActionsRadial_GetDelegateForRadial
+        // {
         //    private static void Postfix(Panel_ActionsRadial __instance, Panel_ActionsRadial.RadialType radialType, Il2CppSystem.Action __result)
         //    {
         //        if(radialType == Panel_ActionsRadial.RadialType.Clothing)
@@ -165,7 +165,7 @@ namespace SkyCoopClient
         //            __result = new System.Action(OpenClothing);
         //        }
         //    }
-        //}
+        // }
 
         private static Il2CppSystem.Collections.Generic.List<GearItem> GetClothingItemsInInventory()
         {
@@ -210,14 +210,14 @@ namespace SkyCoopClient
 
         //     }
         // }
-        // [HarmonyLib.HarmonyPatch(typeof(TimeWidget), "Start")]
-        // private static class TimeWidget_Start
-        // {
-        //     private static void Postfix(TimeWidget __instance)
-        //     {
-        //         //UnityEngine.Object.Destroy(__instance.gameObject);
-        //     }
-        // }
+        [HarmonyLib.HarmonyPatch(typeof(TimeWidget), "Start")]
+        private static class TimeWidget_Start
+        {
+            private static void Postfix(TimeWidget __instance)
+            {
+                //UnityEngine.Object.Destroy(__instance.gameObject);
+            }
+        }
 
         // [HarmonyLib.HarmonyPatch(typeof(BreakDown), "Awake")]
         // private static class BreakDown_Start
@@ -250,18 +250,18 @@ namespace SkyCoopClient
         //     }
         // }
 
-        [HarmonyLib.HarmonyPatch(typeof(GenericStatusBarSpawner), "AssignValuesToSpawnedObject")]
-        private static class GenericStatusBarSpawner_AssignValuesToSpawnedObject
-        {
-            private static void Postfix(GenericStatusBarSpawner __instance)
-            {
-                GenericStatusBarSpawnerHook Hook = __instance.gameObject.GetComponent<GenericStatusBarSpawnerHook>();
-                if (Hook == null)
-                {
-                    Hook = __instance.gameObject.AddComponent<GenericStatusBarSpawnerHook>();
-                }
-            }
-        }
+        // [HarmonyLib.HarmonyPatch(typeof(GenericStatusBarSpawner), "AssignValuesToSpawnedObject")]
+        // private static class GenericStatusBarSpawner_AssignValuesToSpawnedObject
+        // {
+        //     private static void Postfix(GenericStatusBarSpawner __instance)
+        //     {
+        //         GenericStatusBarSpawnerHook Hook = __instance.gameObject.GetComponent<GenericStatusBarSpawnerHook>();
+        //         if (Hook == null)
+        //         {
+        //             Hook = __instance.gameObject.AddComponent<GenericStatusBarSpawnerHook>();
+        //         }
+        //     }
+        // }
 
 
         [HarmonyLib.HarmonyPatch(typeof(GameManager), "Update")]
@@ -355,26 +355,26 @@ namespace SkyCoopClient
         //         RadialSpawnManager.m_RadialSpawnObjects.Clear();
         //     }
         // }
-        // [HarmonyLib.HarmonyPatch(typeof(GameManager), "AllScenesLoaded")]
-        // private static class GameManager_AllScenesLoaded
-        // {
-        //     private static void Postfix(GameManager __instance)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return; }
+        [HarmonyLib.HarmonyPatch(typeof(GameManager), "AllScenesLoaded")]
+        private static class GameManager_AllScenesLoaded
+        {
+            private static void Postfix(GameManager __instance)
+            {
+                if (!ModMain.IsMultiplayer()) { return; }
 
-        //         SkyCoop.Logger.Log(ConsoleColor.Cyan, "Scenes loaded");
+                SkyCoop.Logger.Log(ConsoleColor.Cyan, "Scenes loaded");
 
-        //         for (int i = GearManager.m_Gear.Count - 1; i >= 0; i--)
-        //         {
-        //             GearItem item = GearManager.m_Gear[i];
-        //             if (!item.m_HasBeenOwnedByPlayer && !item.m_BeenInPlayerInventory)
-        //             {
-        //                 GearManager.DestroyGearObject(item);
-        //             }
-        //         }
-        //         ClientSend.SendNewScene(ModMain.GetCurrentSceneName());
-        //     }
-        // }
+                // for (int i = GearManager.m_Gear.Count - 1; i >= 0; i--)
+                // {
+                //     GearItem item = GearManager.m_Gear[i];
+                //     if (!item.m_HasBeenOwnedByPlayer && !item.m_BeenInPlayerInventory)
+                //     {
+                //         GearManager.DestroyGearObject(item);
+                //     }
+                // }
+                ClientSend.SendNewScene(ModMain.GetCurrentSceneName());
+            }
+        }
 
 
         // [HarmonyLib.HarmonyPatch(typeof(Fatigue), "Update")]
@@ -407,86 +407,86 @@ namespace SkyCoopClient
         //         __instance.m_CurrentThirst = 15;
         //     }
         // }
-        // [HarmonyLib.HarmonyPatch(typeof(EmergencyStim), "ApplyEmergencyStimExitEffects")]
-        // private static class EmergencyStim_ApplyEmergencyStimExitEffects
-        // {
-        //     private static void Postfix(EmergencyStim __instance)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return; }
+        [HarmonyLib.HarmonyPatch(typeof(EmergencyStim), "ApplyEmergencyStimExitEffects")]
+        private static class EmergencyStim_ApplyEmergencyStimExitEffects
+        {
+            private static void Postfix(EmergencyStim __instance)
+            {
+                if (!ModMain.IsMultiplayer()) { return; }
 
-        //         GameManager.GetDiminishedState().Apply(1, AfflictionOptions.None);
-        //         GameManager.GetSprainPainComponent().ApplyAffliction(AfflictionBodyArea.LegLeft, "Emergency Stimulator");
-        //         GameManager.GetSprainPainComponent().ApplyAffliction(AfflictionBodyArea.LegRight, "Emergency Stimulator");
-        //     }
-        // }
-        // [HarmonyLib.HarmonyPatch(typeof(Condition), "PlayerDeath")]
-        // private static class Condition_PlayerDeath
-        // {
-        //     private static bool Prefix(Condition __instance)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return true; }
+                GameManager.GetDiminishedState().Apply(1, AfflictionOptions.None);
+                GameManager.GetSprainPainComponent().ApplyAffliction(AfflictionBodyArea.LegLeft, "Emergency Stimulator");
+                GameManager.GetSprainPainComponent().ApplyAffliction(AfflictionBodyArea.LegRight, "Emergency Stimulator");
+            }
+        }
+        [HarmonyLib.HarmonyPatch(typeof(Condition), "PlayerDeath")]
+        private static class Condition_PlayerDeath
+        {
+            private static bool Prefix(Condition __instance)
+            {
+                if (!ModMain.IsMultiplayer()) { return true; }
 
-        //         DataStr.DamageType DamageType = DataStr.DamageType.Unknown;
+                DataStr.DamageType DamageType = DataStr.DamageType.Unknown;
 
-        //         SkyCoop.Logger.Log("PlayerDeath Cause " + __instance.m_CauseOfDeath);
+                SkyCoop.Logger.Log("PlayerDeath Cause " + __instance.m_CauseOfDeath);
 
-        //         DamageType = PlayersManager.m_LastDamageType;
-        //         SkyCoop.Logger.Log("PlayerDeath DamageType " + DamageType);
+                DamageType = PlayersManager.m_LastDamageType;
+                SkyCoop.Logger.Log("PlayerDeath DamageType " + DamageType);
 
 
-        //         if(ModMain.Client != null && ModMain.Client.m_Rules.m_PlayerCanBeKnocked)
-        //         {
-        //             if (GameManager.GetBrokenBody().HasAffliction)
-        //             {
-        //                 PlayersManager.Death(DamageType, PlayersManager.m_LastDamageZone);
-        //                 DeathPacksManager.CreateMyDeathPack();
-        //                 return true;
-        //             }
-        //             PlayersManager.ToKnockedState(DamageType, PlayersManager.m_LastDamageZone);
-        //             //PlayersManager.m_LastDamageType = DataStr.DamageType.Unknown;
+                if(ModMain.Client != null && ModMain.Client.m_Rules.m_PlayerCanBeKnocked)
+                {
+                    if (GameManager.GetBrokenBody().HasAffliction)
+                    {
+                        PlayersManager.Death(DamageType, PlayersManager.m_LastDamageZone);
+                        DeathPacksManager.CreateMyDeathPack();
+                        return true;
+                    }
+                    PlayersManager.ToKnockedState(DamageType, PlayersManager.m_LastDamageZone);
+                    //PlayersManager.m_LastDamageType = DataStr.DamageType.Unknown;
 
-        //             return false;
-        //         }
-        //         else
-        //         {
-        //             PlayersManager.Death(DamageType, PlayersManager.m_LastDamageZone);
-        //             DeathPacksManager.CreateMyDeathPack();
-        //         }
-        //         return true;
-        //     }
-        // }
-        // [HarmonyLib.HarmonyPatch(typeof(PlayerManager), "UseFirstAidItem")]
-        // private static class PlayerManager_UseFirstAidItem
-        // {
-        //     private static bool Prefix(PlayerManager __instance)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return true; }
+                    return false;
+                }
+                else
+                {
+                    PlayersManager.Death(DamageType, PlayersManager.m_LastDamageZone);
+                    DeathPacksManager.CreateMyDeathPack();
+                }
+                return true;
+            }
+        }
+        [HarmonyLib.HarmonyPatch(typeof(PlayerManager), "UseFirstAidItem")]
+        private static class PlayerManager_UseFirstAidItem
+        {
+            private static bool Prefix(PlayerManager __instance)
+            {
+                if (!ModMain.IsMultiplayer()) { return true; }
 
-        //         if (GameManager.GetBrokenBody().HasAffliction)
-        //         {
-        //             HUDMessage.AddMessage("You can't do this while knocked down", true, true);
-        //             GameAudioManager.PlayGUIError();
-        //             return false;
-        //         }
-        //         return true;
-        //     }
-        // }
-        // [HarmonyLib.HarmonyPatch(typeof(PlayerManager), "CanUseFoodInventoryItem")]
-        // private static class PlayerManager_CanUseFoodInventoryItem
-        // {
-        //     private static bool Prefix(PlayerManager __instance)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return true; }
+                if (GameManager.GetBrokenBody().HasAffliction)
+                {
+                    HUDMessage.AddMessage("You can't do this while knocked down", true, true);
+                    GameAudioManager.PlayGUIError();
+                    return false;
+                }
+                return true;
+            }
+        }
+        [HarmonyLib.HarmonyPatch(typeof(PlayerManager), "CanUseFoodInventoryItem")]
+        private static class PlayerManager_CanUseFoodInventoryItem
+        {
+            private static bool Prefix(PlayerManager __instance)
+            {
+                if (!ModMain.IsMultiplayer()) { return true; }
 
-        //         if (GameManager.GetBrokenBody().HasAffliction)
-        //         {
-        //             HUDMessage.AddMessage("You can't do this while knocked down", true, true);
-        //             GameAudioManager.PlayGUIError();
-        //             return false;
-        //         }
-        //         return true;
-        //     }
-        // }
+                if (GameManager.GetBrokenBody().HasAffliction)
+                {
+                    HUDMessage.AddMessage("You can't do this while knocked down", true, true);
+                    GameAudioManager.PlayGUIError();
+                    return false;
+                }
+                return true;
+            }
+        }
 
         // [HarmonyLib.HarmonyPatch(typeof(LoadScene), "Awake")]
         // private static class LoadScene_Awake
@@ -630,35 +630,35 @@ namespace SkyCoopClient
         //         __result = false;
         //     }
         // }
-        // [HarmonyLib.HarmonyPatch(typeof(GameManager), "LoadSceneWithLoadingScreen", new System.Type[] { typeof(string) })]
-        // private static class GameManager_LoadSceneWithLoadingScreen
-        // {
-        //     private static bool Prefix(GameManager __instance, string sceneName)
-        //     {
-        //         if (!ModMain.IsMultiplayer()) { return true; }
+        [HarmonyLib.HarmonyPatch(typeof(GameManager), "LoadSceneWithLoadingScreen", new System.Type[] { typeof(string) })]
+        private static class GameManager_LoadSceneWithLoadingScreen
+        {
+            private static bool Prefix(GameManager __instance, string sceneName)
+            {
+                if (!ModMain.IsMultiplayer()) { return true; }
 
-        //         SkyCoop.Logger.Log("LoadSceneWithLoadingScreen");
-        //         if (string.IsNullOrEmpty(s_SceneSpawnOverride))
-        //         {
-        //             return true;
-        //         }
-        //         SkyCoop.Logger.Log("s_SceneSpawnOverride "+ s_SceneSpawnOverride);
-        //         InterfaceManager.CloseOverlaysDueToSceneLoad();
-        //         SaveGameSystem.ResetForSceneLoad();
-        //         if (GameManager.IsMainMenuActive() || GameManager.IsActiveScene("Empty"))
-        //         {
-        //             GameManager.LoadSceneAsynchronously(s_SceneSpawnOverride);
-        //             s_SceneSpawnOverride = "";
-        //             GameManager.SetPhysicsAutoSimulationEnabled(false);
-        //             return false;
-        //         }
-        //         EmptyScene.s_SceneLoadFromEmpty = s_SceneSpawnOverride;
-        //         s_SceneSpawnOverride = "";
-        //         GameManager.ResetLists();
-        //         SceneManager.LoadScene("Empty", 0);
-        //         return false;
-        //     }
-        // }
+                SkyCoop.Logger.Log("LoadSceneWithLoadingScreen");
+                if (string.IsNullOrEmpty(s_SceneSpawnOverride))
+                {
+                    return true;
+                }
+                SkyCoop.Logger.Log("s_SceneSpawnOverride "+ s_SceneSpawnOverride);
+                InterfaceManager.CloseOverlaysDueToSceneLoad();
+                SaveGameSystem.ResetForSceneLoad();
+                if (GameManager.IsMainMenuActive() || GameManager.IsActiveScene("Empty"))
+                {
+                    GameManager.LoadSceneAsynchronously(s_SceneSpawnOverride);
+                    s_SceneSpawnOverride = "";
+                    GameManager.SetPhysicsAutoSimulationEnabled(false);
+                    return false;
+                }
+                EmptyScene.s_SceneLoadFromEmpty = s_SceneSpawnOverride;
+                s_SceneSpawnOverride = "";
+                GameManager.ResetLists();
+                SceneManager.LoadScene("Empty", 0);
+                return false;
+            }
+        }
         // [HarmonyLib.HarmonyPatch(typeof(PlayerManager), "EatingComplete_Internal")]
         // private static class PlayerManager_EatingComplete_Internal
         // {

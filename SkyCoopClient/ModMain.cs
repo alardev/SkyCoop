@@ -50,7 +50,7 @@ namespace SkyCoop
 
         public static bool IsMultiplayer()
         {
-            if(MenuHook.s_CurrenetMenuOverride == "Multiplayer" || (Client != null && Client.m_IsReady))
+            if(MenuHook.s_CurrentMenuOverride == "Multiplayer" || (Client != null && Client.m_IsReady))
             {
                 return true;
             }

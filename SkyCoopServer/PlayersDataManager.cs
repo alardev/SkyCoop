@@ -668,11 +668,6 @@ namespace SkyCoopServer
                 "X-ray",
                 "Yankee",
                 "Zulu",
-                "Fijma",
-                "Shpingalets",
-                "Dogma",
-                "Cinema",
-                "Sintarians",
             };
             System.Random RNG = new System.Random(Guid.NewGuid().GetHashCode());
             while (CurrentAttempt <= MaxAttempts)
@@ -703,7 +698,7 @@ namespace SkyCoopServer
 
                 return NewSquad;
             }
-            Logger.Log(ConsoleColor.Yellow, $"[Squads] Failed to created Squad. Too many squads!");
+            Logger.Log(ConsoleColor.Yellow, $"[Squads] Failed to created a Squad. Too many squads!");
             return null;
         }
 

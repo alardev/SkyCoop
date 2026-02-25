@@ -50,7 +50,7 @@ Yes. I myself use Linux (Bazzite + Arch) and am not aware of any technical limit
 4. Install `WebRtcVadSharp` version 1.3.2.0 and copy the DLL from your NuGet lib folder to the `SkyCoop/dependencies` directory.
 5. Download the latest ModSettings.dll and place it inside the `SkyCoop/dependencies` directory.
 6. in SkyCoop folder run `dotnet build`
-7. The build should show 2 errors about `Postbuild.cmd` - ignore that. The built DLLs should be inside your `SkyCoop/Output/Debug/` directory.
+7. The built DLLs should be inside your `SkyCoop/Output/Debug/` directory.
 8. Copy the built DLLs and JSON files from the `SkyCoop/Output/Debug/` directory to your Mods folder.
 9. Install `Mono.Nat`, `LiteNetLib` and `OpenVoiceSharp` via NuGet package manager and copy them to your Mods folder.
 The default location for these libraries is in the `~/.nuget/packages/` directory. The correct DLLs are located inside the `lib` directory. 

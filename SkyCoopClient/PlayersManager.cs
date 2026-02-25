@@ -140,7 +140,7 @@ namespace SkyCoop
                     if (Player == null)
                     {
                         Logger.Log(ConsoleColor.Red, "[PlayersManager][InitilizePlayers] Wasn't able to create player object!");
-                        break; // Else, we going to go to infinite loop.
+                        break; // Else we will enter an infinite loop.
                     }
                     s_Players.Add(Player);
                 }

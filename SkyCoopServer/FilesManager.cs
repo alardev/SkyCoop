@@ -36,7 +36,7 @@ namespace SkyCoopServer
             }
             else
             {
-                Logger.Log($"[FilesManager] File {GameMode}/{s_RulesFileName} not exist");
+                Logger.Log($"[FilesManager] File {GameMode}/{s_RulesFileName} does not exist");
             }
 
             if (string.IsNullOrEmpty(JSON))
@@ -103,7 +103,7 @@ namespace SkyCoopServer
             }
             else
             {
-                Logger.Log($"[FilesManager] File {GameMode}/{s_SpawnPointsDirectory}/{Scene} not exist");
+                Logger.Log($"[FilesManager] File {GameMode}/{s_SpawnPointsDirectory}/{Scene} does not exist");
             }
 
             if (string.IsNullOrEmpty(JSON))
@@ -140,7 +140,7 @@ namespace SkyCoopServer
             }
             else
             {
-                Logger.Log($"[FilesManager] File {GameMode}/{s_ZoneConfigDirectory}/{Scene} not exist");
+                Logger.Log($"[FilesManager] File {GameMode}/{s_ZoneConfigDirectory}/{Scene} does not exist");
                 return null;
             }
 
@@ -174,7 +174,7 @@ namespace SkyCoopServer
             }
             else
             {
-                Logger.Log($"[FilesManager] File {GameMode}/{s_VictoryPlaceDirectory}/{SceneName} not exist");
+                Logger.Log($"[FilesManager] File {GameMode}/{s_VictoryPlaceDirectory}/{SceneName} does not exist");
             }
 
             if (string.IsNullOrEmpty(JSON))
@@ -208,7 +208,7 @@ namespace SkyCoopServer
             }
             else
             {
-                Logger.Log($"[FilesManager] File {GameMode}/{s_SpawnPointsDirectory}/{Scene} not exist");
+                Logger.Log($"[FilesManager] File {GameMode}/{s_SpawnPointsDirectory}/{Scene} does not exist");
             }
 
             if (string.IsNullOrEmpty(JSON))

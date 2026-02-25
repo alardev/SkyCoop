@@ -106,7 +106,7 @@ namespace SkyCoopClient
             }
             catch (Exception e) 
             {
-                SkyCoop.Logger.Log(ConsoleColor.Red, $"Cant save file because has error: {e.Message}");
+                SkyCoop.Logger.Log(ConsoleColor.Red, $"Cant save file due to error: {e.Message}");
             }
         }
 
@@ -128,7 +128,7 @@ namespace SkyCoopClient
             }
             catch (Exception e)
             {
-                SkyCoop.Logger.Log(ConsoleColor.Red, $"Cant save file because has error: {e.Message}");
+                SkyCoop.Logger.Log(ConsoleColor.Red, $"Cant save file due to error: {e.Message}");
                 return;
             }
 

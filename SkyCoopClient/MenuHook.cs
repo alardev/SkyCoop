@@ -8,7 +8,7 @@ namespace SkyCoop
 {
     public class MenuHook
     {
-        public static string s_CurrenetMenuOverride = "Original";
+        public static string s_CurrentMenuOverride = "Original";
         public static bool s_SkyCoopSettingsForced = false;
 
         // public static Comps.TexasHoldEmPlay s_RaisBetHook;
@@ -50,9 +50,9 @@ namespace SkyCoop
         {
             Panel_Sandbox Panel = InterfaceManager.GetPanel<Panel_Sandbox>();
 
-            s_CurrenetMenuOverride = mode;
+            s_CurrentMenuOverride = mode;
 
-            Logger.Log("[UI] ChangeMenuItems s_CurrenetMenuOverride " + s_CurrenetMenuOverride);
+            Logger.Log("[UI] ChangeMenuItems s_CurrentMenuOverride " + s_CurrentMenuOverride);
         }
 
         public static void UpdateSandboxMainWindow()
@@ -76,7 +76,7 @@ namespace SkyCoop
                     if(T.name == "SkyCoopRebornTitle_Texture")
                     {
                         FoundReborn = true;
-                        T.gameObject.SetActive(s_CurrenetMenuOverride == "Multiplayer");
+                        T.gameObject.SetActive(s_CurrentMenuOverride == "Multiplayer");
                     }
                 }
             }
@@ -88,7 +88,7 @@ namespace SkyCoop
                     GameObject Clone = UnityEngine.Object.Instantiate(VictimForClone.gameObject, VictimForClone.parent);
                     Clone.name = "SkyCoopRebornTitle_Texture";
                     Clone.GetComponent<UITexture>().mainTexture = AssetManager.GetAssetFromBundle<Texture2D>("Titles_SkyCoopReborn_Texture");
-                    Clone.SetActive(s_CurrenetMenuOverride == "Multiplayer");
+                    Clone.SetActive(s_CurrentMenuOverride == "Multiplayer");
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace SkyCoop
             if (ModMain.Client.m_IsReady)
             {
                 RemovePleaseWait();
-                DoOKMessage("", "You already connected to the server!");
+                DoOKMessage("", "You are already connected to the server!");
             }
             else
             {
@@ -170,7 +170,7 @@ namespace SkyCoop
         {
             public static void Postfix(Panel_Sandbox __instance)
             {
-                if (s_CurrenetMenuOverride == "Multiplayer")
+                if (s_CurrentMenuOverride == "Multiplayer")
                 {
                     __instance.m_BasicMenu.Reset();
                     __instance.m_BasicMenu.UpdateTitle("", "", Vector3.zero);
@@ -188,7 +188,7 @@ namespace SkyCoop
         {
             public static void Postfix(Panel_OptionsMenu __instance)
             {
-                SetMenuOverrideMode(s_CurrenetMenuOverride);
+                SetMenuOverrideMode(s_CurrentMenuOverride);
                 UpdateSandboxMainWindow();
             }
         }
