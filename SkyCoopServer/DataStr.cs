@@ -45,7 +45,7 @@ namespace SkyCoopServer
             public int m_Time = 0;
             public string m_HUDMode = "";
             public bool m_DeathPacks = false;
-            public bool m_Respawns = false;
+            public bool m_Respawns = true;
         }
 
         public class StartingGearData
