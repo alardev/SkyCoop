@@ -7,6 +7,7 @@ This is a fork of the Reborn branch of the **Sky Co-Op** mod in order to support
 This is a personal fork developed by myself. I am not affiliated with the original author [Filigrani](https://github.com/Filigrani).
 
 ## Currently Supported Features
+- Integration of STBlade's SkipIntroRedux to skip intros.
 WIP: I am still reviewing the codebase. I will update this section soon.
 
 ## Planned Features
@@ -70,7 +71,7 @@ You're now ready to launch __Sky Co-Op__! If you encounter any issues, check the
 
 # Credits and Special Gratitude
 - [Filigrani](https://github.com/Filigrani) and [RED1cat](https://github.com/RED1cat) for their groundwork on TLD multiplayer - [SkyCoop](https://github.com/Filigrani/SkyCoop/tree/Reborn).
-- [Zorgesho](https://github.com/zorgesho/) for [SkipIntro mod](https://github.com/zorgesho/TheLongDarkMods/tree/master/SkipIntro).
+- [STBlade](https://github.com/dommrogers/) for his fantastic contributions towards keeping TLD modding alive. Especially for his nuget packages, skipintroredux and many other up-to-date mods.
 - [Lava Gang](https://github.com/LavaGang) for creating [Melon Loader](https://github.com/LavaGang/MelonLoader).
 - Creators and contributors of [Harmony](https://github.com/pardeike/Harmony).
 - [Hinterland Studio Inc](https://hinterlandgames.com/) for creating an awesome game.
