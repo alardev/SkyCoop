@@ -52,7 +52,7 @@ Yes. I myself use Linux (Bazzite + Arch) and am not aware of any technical limit
 6. in SkyCoop folder run `dotnet build`
 7. The built DLLs should be inside your `SkyCoop/Output/Debug/` directory.
 8. Copy the built DLLs and JSON files from the `SkyCoop/Output/Debug/` directory to your Mods folder.
-9. Install `Mono.Nat`, `LiteNetLib` and `OpenVoiceSharp` via NuGet package manager and copy them to your Mods folder.
+9. Install `Mono.Nat`, `LiteNetLib` and `OpenVoiceSharp` via NuGet package manager and copy them to your Mods folder. You can check the correct version in the csproj files inside the server/client folders.
 The default location for these libraries is in the `~/.nuget/packages/` directory. The correct DLLs are located inside the `lib` directory. 
 11. Place the latest ModSettings.dll and ModComponent.dll mods into your Mods folder.
 
@@ -62,8 +62,9 @@ Current working setup (Not production ready yet) is as following:
 1. Install Unity Hub and Unity Editor version `6000.0.60f1`.
 2. Install Windows Build Support (mono).
 3. Open project SkyCoopBundles.
-4. Go to Window > AssetBundle Browser. In the AssetBundle window, go to the Build tab. Click on Build. The default output path is `AssetBundles/StandaloneWindows`. You can find it in your SkyCoopBundles project folder. Copy the `skycoop` binary file from it and paste it into your `Mods` folder.
-5. Go to `SkyCoopBundles/Assets/_ModComponent` and zip the `SkyCoop` folder inside. Rename the `SkyCoop.zip` into `SkyCoop.modcomponent` and move it into your `Mods` folder.
+4. Don't forget to switch to windows build mode in File > Build Profiles.
+5. Go to Window > AssetBundle Browser. In the AssetBundle window, go to the Build tab. Click on Build. The default output path is `AssetBundles/StandaloneWindows`. You can find it in your SkyCoopBundles project folder. Copy the `skycoop` binary file from it and paste it into your `Mods` folder.
+6. Go to `SkyCoopBundles/Assets/_ModComponent` and zip the `SkyCoop` folder inside. Rename the `SkyCoop.zip` into `SkyCoop.modcomponent` and move it into your `Mods` folder.
 
 You're now ready to launch __Sky Co-Op__! If you encounter any issues, check the MelonLoader logs at `MelonLoader/latest.log`.
 
