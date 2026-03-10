@@ -62,7 +62,7 @@ namespace SkyCoop
         {
             Comps.RegisterComponents();
             AssetManager.PreloadMainBundle();
-            AssetManager.RegisterIlegalGearsCommand();
+            AssetManager.RegisterIllegalGearsCommand();
             // AssetManager.DumpAddressablesContent();
             WeaponsManager.InitDescriptors();
         }
@@ -72,7 +72,7 @@ namespace SkyCoop
         {
             MeleeManager.ReinitializeViewModels();
             GameModeHUD.Reinitialize();
-            //AssetManager.DumpLocalizationKeysList();
+            // AssetManager.DumpLocalizationKeysList();
         }
 
         public static void OnGameBoot()
@@ -296,6 +296,20 @@ namespace SkyCoop
                 newGUID = newGUID + _chars[charIndex];
             }
             return newGUID;
+        }
+
+        // Silence the Cougar Screamer bug in the main menu.
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        {
+            if (sceneName == "MainMenu_DLC01")
+            {
+                GameObject cougarAudio = GameObject.Find("AudioMainMenuDLC01_CougarCries");
+                if (cougarAudio != null)
+                {
+                    cougarAudio.SetActive(false);
+                    Logger.Log("Cougar screamer silenced.");
+                }
+            }
         }
 
         [HarmonyLib.HarmonyPatch(typeof(GameManager), "OnApplicationFocus")]
