@@ -7,14 +7,14 @@ namespace SkyCoopServer
     public class Server : IDisposable
     {
         public int m_Port = 37855;
-        public NetworkHelper m_NetworkHelper;
+        public NetworkHelper? m_NetworkHelper;
 
         public DataStr.ServerConfig m_Config = new DataStr.ServerConfig();
         public DataStr.GameRules m_Rules = new DataStr.GameRules();
         public EventBasedNetListener m_Listener;
         public NetManager m_Instance;
         public bool m_IsReady = false;
-        public ServerVoice m_VoiceServer = null;
+        public ServerVoice? m_VoiceServer = null;
         public int m_PendingGameModeOverTimer = 0;
 
         // Data Sync Instances
@@ -43,7 +43,7 @@ namespace SkyCoopServer
             { (int)Packet.Type.ClientRequestRespawn, ServerHandle.ClientRequestRespawn },
             { (int)Packet.Type.ClientInjectedItem, ServerHandle.ClientInjectedItem },
             { (int)Packet.Type.ClientRemoveInjectedItem, ServerHandle.ClientRemoveInjectedItem },
-            { (int)Packet.Type.ClientEraceAllInjectedItems, ServerHandle.ClientEraceAllInjectedItems },
+            { (int)Packet.Type.ClientEraseAllInjectedItems, ServerHandle.ClientEraseAllInjectedItems },
             { (int)Packet.Type.ClientSendGear, ServerHandle.ClientSendGear },
             { (int)Packet.Type.ClientPickUpGear, ServerHandle.ClientPickUpGear },
             { (int)Packet.Type.ClientLoadedScene, ServerHandle.ClientLoadedScene },
@@ -68,8 +68,7 @@ namespace SkyCoopServer
 
         public void ExecutePacketEvent(int PacketID, NetPeer Client, NetDataReader Reader)
         {
-            PacketHandler Handle;
-            if (s_packetHandlers.TryGetValue(PacketID, out Handle))
+            if (s_packetHandlers.TryGetValue(PacketID, out PacketHandler Handle))
             {
                 Handle(Client, Reader, this);
             }
@@ -103,16 +102,16 @@ namespace SkyCoopServer
             return Indexes;
         }
 
-        public DataStr.PlayerData GetPlayerDataByNetPeer(NetPeer Peer)
+        public DataStr.PlayerData? GetPlayerDataByNetPeer(NetPeer Peer)
         {
-            if (m_Instance != null)
+            if (Peer == null || m_Instance == null)
             {
-                return m_PlayersData.GetPlayer(Peer.Id);
+                return null;
             }
-            return null;
+            return m_PlayersData.GetPlayer(Peer.Id);
         }
 
-        public NetPeer GetClient(int Index)
+        public NetPeer? GetClient(int Index)
         {
             if (m_Instance != null)
             {
@@ -218,7 +217,7 @@ namespace SkyCoopServer
 
         public void StartServer(int port, int maxPlayers, string key = "key")
         {
-            m_PlayersData.InitilizePlayers(maxPlayers);
+            m_PlayersData.InitializePlayers(maxPlayers);
             Logger.Log(ConsoleColor.Green, "[Server] Starting server");
             m_Instance.Start(port);
 

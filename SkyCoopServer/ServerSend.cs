@@ -103,7 +103,7 @@ namespace SkyCoopServer
             writer.Put(WeaponName);
             Client.Send(writer, DeliveryMethod.ReliableOrdered);
         }
-        public static void SendProjectile(NetPeer Client, Vector3 Position, Quaternion Rotation, string ProjectileName, float ExtaFloat, Server ServerInstance)
+        public static void SendProjectile(NetPeer Client, Vector3 Position, Quaternion Rotation, string ProjectileName, float ExtraFloat, Server ServerInstance)
         {
             NetDataWriter writer = new NetDataWriter();
 
@@ -112,7 +112,7 @@ namespace SkyCoopServer
             writer.Put(Position);
             writer.Put(Rotation);
             writer.Put(ProjectileName);
-            writer.Put(ExtaFloat);
+            writer.Put(ExtraFloat);
 
             DataStr.PlayerData Shooter = ServerInstance.m_PlayersData.GetPlayer(Client.Id);
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())

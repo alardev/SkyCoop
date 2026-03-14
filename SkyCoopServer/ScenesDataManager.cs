@@ -125,7 +125,7 @@ namespace SkyCoopServer
             }
         }
 
-        public GearDataContainer GetGear(string SceneName, string GUID, bool Remove = false)
+        public GearDataContainer? GetGear(string SceneName, string GUID, bool Remove = false)
         {
             LoadScene(SceneName);
             if (m_LoadedScenes.ContainsKey(SceneName))

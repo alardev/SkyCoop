@@ -6,14 +6,14 @@ namespace SkyCoopServer
     public class ServerVoice : IDisposable
     {
         public int m_Port = 37850;
-        public NetworkHelper m_NetworkHelper;
+        public NetworkHelper? m_NetworkHelper;
 
         public EventBasedNetListener m_Listener;
         public const float c_MaxProximityChatDistance = 30; // Voice3d AudioSource has it set to 25, but keep it a bit higher, to catch up with movement sync.
         public NetManager m_Instance;
         public bool m_IsReady = false;
 
-        public Server m_GameServer = null;
+        public Server? m_GameServer = null;
 
         public ServerVoice(Server GameServer)
         {
@@ -35,7 +35,7 @@ namespace SkyCoopServer
             return Indexes;
         }
 
-        public NetPeer GetClient(int Index)
+        public NetPeer? GetClient(int Index)
         {
             if (m_Instance != null)
             {

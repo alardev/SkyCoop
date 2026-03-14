@@ -21,7 +21,7 @@ namespace SkyCoopServer
             s_Server = ServerInstance;
         }
 
-        public void InitilizePlayers(int MaxPlayers)
+        public void InitializePlayers(int MaxPlayers)
         {
             m_Players.Clear(); // Clear instead of creating new.
             for (int i = 0; i < MaxPlayers; i++)
@@ -30,8 +30,12 @@ namespace SkyCoopServer
             }
         }
 
-        public DataStr.PlayerData GetPlayer(int Index)
+        public DataStr.PlayerData? GetPlayer(int Index)
         {
+            if (Index < 0 || Index >= m_Players.Count)
+            {
+                return null;
+            }
             return m_Players[Index];
         }
 
@@ -582,7 +586,7 @@ namespace SkyCoopServer
             return "";
         }
 
-        public PlayersSquad GetPlayerSquadIn(int PlayerID)
+        public PlayersSquad? GetPlayerSquadIn(int PlayerID)
         {
             foreach (PlayersSquad Squad in m_Squads.Values.ToArray())
             {
@@ -687,7 +691,7 @@ namespace SkyCoopServer
             return CreateSquad(GetRandomSquadName());
         }
 
-        public PlayersSquad CreateSquad(string SquadName)
+        public PlayersSquad? CreateSquad(string SquadName)
         {
             if (!m_Squads.ContainsKey(SquadName))
             {
@@ -702,7 +706,7 @@ namespace SkyCoopServer
             return null;
         }
 
-        public PlayersSquad GetRandomJoinableSquad(int PlayerID)
+        public PlayersSquad? GetRandomJoinableSquad(int PlayerID)
         {
             List<PlayersSquad> Joinables = new List<PlayersSquad> ();
 

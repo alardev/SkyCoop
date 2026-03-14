@@ -44,18 +44,22 @@ namespace SkyCoopServer
                 Logger.Log($"[FilesManager] File {GameMode}/{s_RulesFileName} is empty");
                 return Rules;
             }
-            GameRulesSave Save = JsonSerializer.Deserialize<GameRulesSave>(JSON);
+            GameRulesSave? Save = JsonSerializer.Deserialize<GameRulesSave>(JSON);
+            if (Save == null)
+            {
+                return Rules;
+            }
             Rules.m_PlayerCanBeKnocked = Save.Knockdowns;
             Rules.m_PVP = Save.PVP;
-            Rules.m_StartingItems = Save.StartingGear;
-            Rules.m_StartingItemsByTier = Save.StartingGearByTier;
+            Rules.m_StartingItems = Save.StartingGear ?? new List<StartingGearData>();
+            Rules.m_StartingItemsByTier = Save.StartingGearByTier ?? new List<List<StartingGearData>>();
             // TODO: ADD PROPER CHECK OF CFG FOR ALL PARAMETERS!!!!
             if(Rules.m_StartingItemsByTier == null)
             {
                 Rules.m_StartingItemsByTier = Rules.m_StartingItemsByTier = new List<List<StartingGearData>>();
             }
             Rules.m_Time = Save.Time;
-            Rules.m_HUDMode = Save.HUDMode;
+            Rules.m_HUDMode = Save.HUDMode ?? string.Empty;
             Rules.m_Respawns = Save.Respawns;
             Rules.m_DeathPacks = Save.DeathPacks;
             return Rules;
@@ -111,7 +115,11 @@ namespace SkyCoopServer
                 Logger.Log($"[FilesManager] File {GameMode}/{s_SpawnPointsDirectory}/{Scene} is empty");
                 return Points;
             }
-            SpawnPointSave Save = JsonSerializer.Deserialize<SpawnPointSave>(JSON);
+            SpawnPointSave? Save = JsonSerializer.Deserialize<SpawnPointSave>(JSON);
+            if (Save?.points == null)
+            {
+                return Points;
+            }
             for (int i = 0; i < Save.points.Count; i++)
             {
                 SpawnPoint Point = Save.points[i];
@@ -120,7 +128,7 @@ namespace SkyCoopServer
             return Points;
         }
 
-        public static DangerCircleConfig GetZoneConfig(string GameMode, string Scene)
+        public static DangerCircleConfig? GetZoneConfig(string GameMode, string Scene)
         {
             string Path = $"{s_DataDirectory}/{GameMode}/{s_ZoneConfigDirectory}/{Scene}";
             string JSON = "";
@@ -149,7 +157,7 @@ namespace SkyCoopServer
                 Logger.Log($"[FilesManager] File {GameMode}/{s_ZoneConfigDirectory}/{Scene} is empty");
                 return null;
             }
-            DangerCircleConfig CFG = JsonSerializer.Deserialize<DangerCircleConfig>(JSON);
+            DangerCircleConfig? CFG = JsonSerializer.Deserialize<DangerCircleConfig>(JSON);
             return CFG;
         }
 
@@ -182,14 +190,18 @@ namespace SkyCoopServer
                 Logger.Log($"[FilesManager] File {GameMode}/{s_VictoryPlaceDirectory}/{SceneName} is empty");
                 return Position;
             }
-            DangerCircleCenter Save = JsonSerializer.Deserialize<DangerCircleCenter>(JSON);
+            DangerCircleCenter? Save = JsonSerializer.Deserialize<DangerCircleCenter>(JSON);
+            if (Save == null)
+            {
+                return Position;
+            }
 
             return new Vector3(Save.x, Save.y, Save.z);
         }
 
-        public static PropDataSave GetProps(string GameMode, string Scene)
+        public static PropDataSave? GetProps(string GameMode, string Scene)
         {
-            PropDataSave Save = new PropDataSave();
+            PropDataSave? Save = null;
             string Path = $"{s_DataDirectory}/{GameMode}/{s_PropsDirectory}/{Scene}";
             string JSON = "";
 

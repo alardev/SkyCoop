@@ -29,7 +29,7 @@ namespace SkyCoopServer
 
     //     public static void TryJoinGame(NetPeer Client, string GUID, int PlayerID, int PokerID, Server ServerInstance)
     //     {
-    //         SkyCoopServer.Logger.Log($"CardGamesManager TryJoinGame {GUID} ClinetID {PlayerID} GamePlayerID {PokerID}");
+    //         SkyCoopServer.Logger.Log($"CardGamesManager TryJoinGame {GUID} ClientID {PlayerID} GamePlayerID {PokerID}");
     //         if (m_Games.ContainsKey(GUID))
     //         {
     //             //m_Games[GUID].PlayerAction();
@@ -48,7 +48,7 @@ namespace SkyCoopServer
     //             {
     //                 return;
     //             }
-    //             SkyCoopServer.Logger.Log($"CardGamesManager TryJoinGame {GUID} ClinetID {PlayerID} GamePlayerID {PokerID}");
+    //             SkyCoopServer.Logger.Log($"CardGamesManager TryJoinGame {GUID} ClientID {PlayerID} GamePlayerID {PokerID}");
     //             m_Games[GUID].SetNewPlayer(PokerID, PlayerID);
     //             string SceneName = ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene;
     //             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())

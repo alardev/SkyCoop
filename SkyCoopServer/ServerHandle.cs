@@ -13,16 +13,18 @@ namespace SkyCoopServer
         public static void Welcome(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
             string PlayerName = Reader.GetString();
-            Logger.Log(ConsoleColor.Green, $"[ServerHandle] Сlient {Client.Id} connected under name: {PlayerName}");
+            Logger.Log(ConsoleColor.Green, $"[ServerHandle] Client {Client.Id} connected under name: {PlayerName}");
             ServerInstance.m_PlayersData.SetPlayerName(Client.Id, PlayerName);
             ServerSend.ServerConfig(Client, ServerInstance.m_Config, ServerInstance.m_Rules);
 
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
             {
-                ServerSend.SendClientName(Client, Peer.Id, ServerInstance.m_PlayersData.GetPlayer(Peer.Id).m_PlayerName);
+                DataStr.PlayerData? PeerPlayer = ServerInstance.m_PlayersData.GetPlayer(Peer.Id);
+                DataStr.PlayerData? ClientPlayer = ServerInstance.m_PlayersData.GetPlayer(Client.Id);
+                ServerSend.SendClientName(Client, Peer.Id, PeerPlayer?.m_PlayerName ?? "Unknown");
                 if(Peer.Id != Client.Id)
                 {
-                    ServerSend.SendClientName(Peer, Client.Id, ServerInstance.m_PlayersData.GetPlayer(Client.Id).m_PlayerName);
+                    ServerSend.SendClientName(Peer, Client.Id, ClientPlayer?.m_PlayerName ?? "Unknown");
                     if (ServerInstance.m_Rules != null && ServerInstance.m_Rules.m_HUDMode == "DMStats")
                     {
                         ServerSend.SendHUDSideBar(Peer, 3, "", $"Score:", ServerInstance.m_PlayersData.GetPlayerScoreString(Peer.Id), ServerInstance);
@@ -97,17 +99,30 @@ namespace SkyCoopServer
                 return;
             }
 
-            if (ServerInstance.m_PlayersData.m_Players[Victim].m_GamePlayState == DataStr.PlayerData.GamePlayState.Alive)
+            // Validate victim index bounds
+            DataStr.PlayerData VictimPlayer = ServerInstance.m_PlayersData.GetPlayer(Victim);
+            if (VictimPlayer == null)
+            {
+                return;
+            }
+
+            if (VictimPlayer.m_GamePlayState == DataStr.PlayerData.GamePlayState.Alive)
             {
                 ServerSend.SendDamageToPlayer(ServerInstance.GetClient(Victim), Damage, Killer, BodyPart, WeaponName);
                 ServerSend.SendGettingDamage(Victim, ServerInstance);
 
-                ServerInstance.m_PlayersData.m_Players[Victim].DealDamage(Killer, Damage, DamageType);
+                VictimPlayer.DealDamage(Killer, Damage, DamageType);
             }
         }
         public static void ClientProjectile(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
-            if (ServerInstance.GetPlayerDataByNetPeer(Client).m_GamePlayState != PlayerData.GamePlayState.Alive && !ServerInstance.CanRespawn())
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
+            if (Player.m_GamePlayState != PlayerData.GamePlayState.Alive && !ServerInstance.CanRespawn())
             {
                 return;
             }
@@ -115,22 +130,34 @@ namespace SkyCoopServer
             Vector3 Pos = Reader.GetVector3();
             Quaternion Rot = Reader.GetQuaternion();
             string ProjectileName = Reader.GetString();
-            float ExtaFloat = Reader.GetFloat();
-            ServerSend.SendProjectile(Client, Pos, Rot, ProjectileName, ExtaFloat, ServerInstance);
+            float ExtraFloat = Reader.GetFloat();
+            ServerSend.SendProjectile(Client, Pos, Rot, ProjectileName, ExtraFloat, ServerInstance);
         }
         public static void ClientDied(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
             int DamageI = Reader.GetInt();
             DataStr.DamageType DamageType = (DataStr.DamageType)DamageI;
             bool Knocked = Reader.GetBool();
             bool HeadShot = Reader.GetBool();
             Logger.Log($"[ServerHandle] ClientDied {DamageType.ToString()} Knocked {Knocked} HeadShot {HeadShot}");
-            ServerInstance.GetPlayerDataByNetPeer(Client).ConfirmKill(ServerInstance, DamageType, Knocked, HeadShot);
+            Player.ConfirmKill(ServerInstance, DamageType, Knocked, HeadShot);
         }
         public static void ClientRevived(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
             int Reviver = Reader.GetInt();
-            ServerInstance.GetPlayerDataByNetPeer(Client).Revived(Reviver, ServerInstance);
+            Player.Revived(Reviver, ServerInstance);
             if(Reviver == -2)
             {
                 ServerSend.SendRemoveAllInjectedItem(Client.Id, ServerInstance);
@@ -152,13 +179,19 @@ namespace SkyCoopServer
         }
         public static void ClientRequestRespawn(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
-            DataStr.PlayerData.GamePlayState State = ServerInstance.m_PlayersData.m_Players[Client.Id].m_GamePlayState;
+            DataStr.PlayerData Player = ServerInstance.m_PlayersData.GetPlayer(Client.Id);
+            if (Player == null)
+            {
+                return;
+            }
+
+            DataStr.PlayerData.GamePlayState State = Player.m_GamePlayState;
 
 
             Logger.Log($"[ServerHandle] ClientRequestRespawn PlayerID {Client.Id} m_GamePlayState: {State.ToString()}");
             if (State == DataStr.PlayerData.GamePlayState.Dead)
             {
-                DataStr.V3Quat Point = ServerInstance.m_ScenesData.GetSpawnPoint(ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene);
+                DataStr.V3Quat Point = ServerInstance.m_ScenesData.GetSpawnPoint(Player.m_Scene);
                 ServerSend.SendPlayerRespawn(Client, Point.m_Position, Point.m_Rotation);
             }else if(State == PlayerData.GamePlayState.Spectator)
             {
@@ -227,14 +260,20 @@ namespace SkyCoopServer
                 }
             }
         }
-        public static void ClientEraceAllInjectedItems(NetPeer Client, NetDataReader Reader, Server ServerInstance)
+        public static void ClientEraseAllInjectedItems(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
             ServerSend.SendRemoveAllInjectedItem(Client.Id, ServerInstance);
         }
 
         public static void ClientSendGear(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
-            if (ServerInstance.GetPlayerDataByNetPeer(Client).m_GamePlayState != PlayerData.GamePlayState.Alive && !ServerInstance.CanRespawn())
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
+            if (Player.m_GamePlayState != PlayerData.GamePlayState.Alive && !ServerInstance.CanRespawn())
             {
                 return;
             }
@@ -243,12 +282,18 @@ namespace SkyCoopServer
             Quaternion Rotation = Reader.GetQuaternion();
             string JSON = Reader.GetString();
 
-            ServerInstance.m_ScenesData.AddGear(ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene, GearName, Position, Rotation, JSON);
+            ServerInstance.m_ScenesData.AddGear(Player.m_Scene, GearName, Position, Rotation, JSON);
         }
 
         public static void ClientPickUpGear(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
-            if (ServerInstance.GetPlayerDataByNetPeer(Client).m_GamePlayState != PlayerData.GamePlayState.Alive)
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
+            if (Player.m_GamePlayState != PlayerData.GamePlayState.Alive)
             {
                 ServerSend.SendPickUpGearFailed(Client);
                 return;
@@ -336,34 +381,47 @@ namespace SkyCoopServer
             string GUID = Reader.GetString();
             bool OpenState = Reader.GetBool();
 
+            DataStr.PlayerData ClientPlayer = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (ClientPlayer == null)
+            {
+                return;
+            }
+
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
             {
                 if (Peer.Id != Client.Id)
                 {
-                    if (ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene)
+                    DataStr.PlayerData PeerPlayer = ServerInstance.GetPlayerDataByNetPeer(Peer);
+                    if (PeerPlayer != null && PeerPlayer.m_Scene == ClientPlayer.m_Scene)
                     {
                         ServerSend.SendOpenableState(Peer, GUID, OpenState);
                     }
                 }
             }
-            ServerInstance.m_ScenesData.AddOpenableState(ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene, GUID, OpenState);
+            ServerInstance.m_ScenesData.AddOpenableState(ClientPlayer.m_Scene, GUID, OpenState);
         }
 
         public static void ClientClothing(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
-            if (ServerInstance.GetPlayerDataByNetPeer(Client).m_GamePlayState != PlayerData.GamePlayState.Alive)
+            DataStr.PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Player == null)
+            {
+                return;
+            }
+
+            if (Player.m_GamePlayState != PlayerData.GamePlayState.Alive)
             {
                 return;
             }
             DataStr.ClothingData ClothingData = Reader.GetClothingData();
-            PlayerData Data = ServerInstance.GetPlayerDataByNetPeer(Client);
-            Data.m_VisualData.m_ClothingData = ClothingData;
+            Player.m_VisualData.m_ClothingData = ClothingData;
 
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
             {
                 if (Peer.Id != Client.Id || ServerInstance.m_PlayersData.m_RecursiveDebug)
                 {
-                    if(ServerInstance.GetPlayerDataByNetPeer(Peer).m_Scene == ServerInstance.GetPlayerDataByNetPeer(Client).m_Scene)
+                    DataStr.PlayerData PeerPlayer = ServerInstance.GetPlayerDataByNetPeer(Peer);
+                    if(PeerPlayer != null && PeerPlayer.m_Scene == Player.m_Scene)
                     {
                         ServerSend.SendClothing(Peer, ClothingData, Client.Id);
                     }
@@ -373,7 +431,7 @@ namespace SkyCoopServer
         public static void ClientTryInteract(NetPeer Client, NetDataReader Reader, Server ServerInstance)
         {
             PlayerData Player = ServerInstance.GetPlayerDataByNetPeer(Client);
-            if (Player.m_GamePlayState != PlayerData.GamePlayState.Alive)
+            if (Player == null || Player.m_GamePlayState != PlayerData.GamePlayState.Alive)
             {
                 ServerSend.SendInteractResult(Client, false);
                 return;
@@ -383,13 +441,14 @@ namespace SkyCoopServer
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
             {
                 PlayerData Data = ServerInstance.GetPlayerDataByNetPeer(Peer);
-                if (Peer.Id != Client.Id)
+                if (Data == null || Peer.Id == Client.Id)
                 {
-                    if(Data.m_CarSeat == GUID || Data.m_InteractionGUID == GUID)
-                    {
-                        ServerSend.SendInteractResult(Client, false);
-                        return;
-                    }
+                    continue;
+                }
+                if(Data.m_CarSeat == GUID || Data.m_InteractionGUID == GUID)
+                {
+                    ServerSend.SendInteractResult(Client, false);
+                    return;
                 }
             }
 
@@ -405,12 +464,20 @@ namespace SkyCoopServer
         {
             string GUID = Reader.GetString();
             PlayerData Data = ServerInstance.GetPlayerDataByNetPeer(Client);
+            if (Data == null)
+            {
+                return;
+            }
 
             if (!string.IsNullOrEmpty(GUID))
             {
                 foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
                 {
                     PlayerData OtherData = ServerInstance.GetPlayerDataByNetPeer(Peer);
+                    if (OtherData == null)
+                    {
+                        continue;
+                    }
 
                     if (Peer.Id != Client.Id)
                     {
@@ -437,8 +504,14 @@ namespace SkyCoopServer
         {
             DataStr.DeathPack Pack = Reader.GetDeathPack();
             string JSONCompressed = Reader.GetString();
-            ServerInstance.m_ScenesData.AddDeathPack(Pack, ServerInstance.m_PlayersData.GetPlayer(Client.Id).m_Scene);
-            ServerInstance.m_ScenesData.AddContainer(Pack.m_GUID, JSONCompressed, ServerInstance.m_PlayersData.GetPlayer(Client.Id).m_Scene);
+            DataStr.PlayerData Player = ServerInstance.m_PlayersData.GetPlayer(Client.Id);
+            if (Player == null)
+            {
+                return;
+            }
+
+            ServerInstance.m_ScenesData.AddDeathPack(Pack, Player.m_Scene);
+            ServerInstance.m_ScenesData.AddContainer(Pack.m_GUID, JSONCompressed, Player.m_Scene);
 
             foreach (NetPeer Peer in ServerInstance.m_Instance.ConnectedPeerList.ToArray())
             {

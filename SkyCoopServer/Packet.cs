@@ -27,7 +27,7 @@ namespace SkyCoopServer
             ClientRequestRespawn,
             ClientInjectedItem,
             ClientRemoveInjectedItem,
-            ClientEraceAllInjectedItems,
+            ClientEraseAllInjectedItems,
             ClientGettingDamage,
             ClientSendGear,
             ClientPickUpGear,

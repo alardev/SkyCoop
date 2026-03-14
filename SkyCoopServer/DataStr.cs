@@ -28,10 +28,10 @@ namespace SkyCoopServer
         {
             public bool Knockdowns { get; set; }
             public bool PVP { get; set; }
-            public List<StartingGearData> StartingGear { get; set; }
-            public List<List<StartingGearData>> StartingGearByTier { get; set; }
+            public List<StartingGearData> StartingGear { get; set; } = new List<StartingGearData>();
+            public List<List<StartingGearData>> StartingGearByTier { get; set; } = new List<List<StartingGearData>>();
             public int Time { get; set; }
-            public string HUDMode { get; set; }
+            public string HUDMode { get; set; } = string.Empty;
             public bool DeathPacks { get; set; }
             public bool Respawns { get; set; }
         }
@@ -50,7 +50,7 @@ namespace SkyCoopServer
 
         public class StartingGearData
         {
-            public List<string> Variants { get; set; }
+            public List<string> Variants { get; set; } = new List<string>();
             public int Units { get; set; }
 
             public string Get()
@@ -302,7 +302,7 @@ namespace SkyCoopServer
             public void AddKill(Server ServerInstance)
             {
                 m_Kills++;
-                if (ServerInstance.m_Rules != null && ServerInstance.m_Rules.m_HUDMode == "DMStats" || ServerInstance.m_Rules.m_HUDMode == "Shrink")
+                if ((ServerInstance.m_Rules != null && ServerInstance.m_Rules.m_HUDMode == "DMStats") || (ServerInstance.m_Rules != null && ServerInstance.m_Rules.m_HUDMode == "Shrink"))
                 {
                     ServerSend.SendHUDSideBarUpdate(ServerInstance.GetClient(m_PlayerID), 0, m_Kills.ToString(), ServerInstance);
                 }
@@ -461,7 +461,7 @@ namespace SkyCoopServer
             
             public Dictionary<string, PropData> m_Props = new Dictionary<string, PropData>();
             public List<V3Quat> m_SpawnPoints = new List<V3Quat>();
-            public DataStr.DangerCircleData m_ActiveZone = null;
+            public DataStr.DangerCircleData? m_ActiveZone = null;
         }
 
         public struct DMScore : IComparable<DMScore>
@@ -557,7 +557,7 @@ namespace SkyCoopServer
         }
         public class SpawnPointSave
         {
-            public List<SpawnPoint> points { get; set; }
+            public List<SpawnPoint> points { get; set; } = new List<SpawnPoint>();
         }
 
         public class V3Quat
@@ -607,7 +607,7 @@ namespace SkyCoopServer
             private DateTime s_NextStageCall;
             private bool s_NextStageTimerActive = false;
             private string s_SceneName = "";
-            private Server s_ServerInstance;
+            private Server? s_ServerInstance;
             private bool s_DebugPauseTimer = false;
 
             public string GetTimerPrefix()
@@ -627,7 +627,7 @@ namespace SkyCoopServer
                 return m_Config.Stages[m_CurrentStage];
             }
 
-            public DataStr.ShrinkStage GetNextStage()
+            public DataStr.ShrinkStage? GetNextStage()
             {
                 int Index = m_CurrentStage+1;
                 if (Index < m_Config.Stages.Count)
@@ -902,9 +902,9 @@ namespace SkyCoopServer
 
         public class DangerCircleConfig
         {
-            public DangerCircleCenter ActualCenter { get; set; }
+            public DangerCircleCenter? ActualCenter { get; set; }
             public float StartingRadius { get; set; }
-            public List<ShrinkStage> Stages { get; set; }
+            public List<ShrinkStage>? Stages { get; set; }
         }
 
         public class ClothingData
@@ -1170,11 +1170,11 @@ namespace SkyCoopServer
         // }
         public class PropDataSave
         {
-            public List<PropData> props { get; set; }
+            public List<PropData> props { get; set; } = new List<PropData>();
         }
         public class PropData
         {
-            public string prefabname { get; set; }
+            public string prefabname { get; set; } = string.Empty;
             public bool frombundle { get; set; }
             public float posx { get; set; }
             public float posy { get; set; }
@@ -1184,7 +1184,7 @@ namespace SkyCoopServer
             public float roty { get; set; }
             public float rotz { get; set; }
             public float rotw { get; set; }
-            public string guid { get; set; }
+            public string guid { get; set; } = string.Empty;
         }
     }
 }
